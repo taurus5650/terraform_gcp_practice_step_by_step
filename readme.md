@@ -37,10 +37,15 @@ $ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:$ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
   --role="roles/admin"
 
-# CloudSql grant permission
+# CloudSql grant permission - admin
 gcloud projects add-iam-policy-binding terraform-practice-250806 \
   --member="serviceAccount:terraform-ci-account@terraform-practice-250806.iam.gserviceaccount.com" \
   --role="roles/cloudsql.admin"
+  
+# CloudSql grant permission - client
+gcloud projects add-iam-policy-binding terraform-practice-250806 \
+  --member="serviceAccount:terraform-ci-account@terraform-practice-250806.iam.gserviceaccount.com" \
+  --role="roles/cloudsql.client"
  
 # Genarate token
 $ gcloud iam service-accounts keys create terraform-ci.json \

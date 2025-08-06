@@ -15,6 +15,5 @@ COPY . .
 RUN ls -la /terraform-gcp-practice-app/src/backend
 
 EXPOSE 5000
-# First time execute to build db table
-CMD python src/backend/init_db.py && python src/backend/app.py
-# CMD ["python", "src/backend/run.py"]
+
+CMD ["python", "src/backend/run.py"]
