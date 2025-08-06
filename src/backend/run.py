@@ -19,7 +19,11 @@ def order():
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
+        try:
+            db.create_all()
+            print('DB Created')
+        except Exception as e:
+            print(f'DB create failed: {e}')
 
     debug_mode = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
     port = int(os.environ.get('PORT', 5000))
