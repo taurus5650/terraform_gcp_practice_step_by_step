@@ -16,3 +16,7 @@ https://console.cloud.google.com/marketplace/product/google/admin.googleapis.com
 cloud run admin api
 https://console.cloud.google.com/apis/library/run.googleapis.com?authuser=1&inv=1&invt=Ab4uGA&project=terraform-practice-250806
 ![cloud-run-admin.png](readme/cloud-run-admin.png)
+
+artifact registry api
+https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com?inv=1&invt=Ab4uJg&authuser=1&project=terraform-practice-250806
+![artifact-registry-api.png](readme/artifact-registry-api.png)
