@@ -73,6 +73,11 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 		google_cloud_run_service_iam_member.public \
 		projects/$(GCP_PROJECT_ID)/locations/asia-east1/services/flask-api/roles/run.invoker/allUsers || true
 
+	# VPC Network
+	cd $(TF_DIR) && terraform import \
+		google_compute_network.vpc_network \
+		projects/$(GCP_PROJECT_ID)/global/networks/main-vpc || true
+
 
 run-terraform-apply:
 	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars
