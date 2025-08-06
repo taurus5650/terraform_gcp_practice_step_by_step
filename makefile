@@ -4,7 +4,7 @@ DOCKER_FILE = Dockerfile
 
 GCP_PROJECT_ID = terraform-practice-250806
 TF_DIR = $(DEPLOYMENT)/terraform
-TF_REPO = terrform-practice-repo
+TF_REPO = terraform-practice-repo
 ASIA_PKG = asia-east1-docker.pkg.dev
 
 IMAGE_NAME = terraform-practice-image
