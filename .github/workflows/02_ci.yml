@@ -25,5 +25,3 @@ jobs:
         run: make run-terraform-fmt
       - name: terraform-validate
         run: make run-terraform-validate
-      - name: build-and-push-docker-image-to-artifact-registry
-        run: make run-docker-push-to-artifact-registry
