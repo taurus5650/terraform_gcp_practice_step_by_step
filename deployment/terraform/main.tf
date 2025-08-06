@@ -28,7 +28,6 @@ resource "google_project_service" "service_networking" {
   service = "servicenetworking.googleapis.com"
 }
 
-network = google_compute_network.vpc_network.id
 resource "google_compute_network" "vpc_network" {
   name                    = "main-vpc"
   auto_create_subnetworks = true
@@ -40,12 +39,12 @@ resource "google_compute_global_address" "private_ip_alloc" {
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
-  network       = var.vpc_network
+  network       = google_compute_network.vpc_network.id
 }
 
 resource "google_service_networking_connection" "private_vpc_connection" {
   # Create VPM peering connecting
-  network                 = var.vpc_network
+  network                 = google_compute_network.vpc_network.id
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
   depends_on = [
