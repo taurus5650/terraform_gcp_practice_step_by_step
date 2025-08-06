@@ -1,5 +1,6 @@
 ## Google Cloud - Create new project
-https://console.cloud.google.com/welcome/new?authuser=1&pli=1&inv=1&invt=Ab4uGA
+https://console.cloud.googl
+e.com/welcome/new?authuser=1&pli=1&inv=1&invt=Ab4uGA
 ![new-project.png](readme/new-project.png)
 ![project-name.png](readme/project-name.png)
 
@@ -27,6 +28,13 @@ https://console.cloud.google.com/apis/library/sqladmin.googleapis.com?inv=1&invt
 compute engine api
 https://console.cloud.google.com/apis/library/compute.googleapis.com?inv=1&invt=Ab4whg&authuser=2&project=terraform-practice-250806
 ![compute-engine.png](readme/compute-engine.png)
+
+cloud resource manager api
+https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com?inv=1&invt=Ab4wig&authuser=2&project=terraform-practice-250806
+![cloud-resource-manager.png](readme/cloud-resource-manager.png)
+
+
+
 
 ## Local Terminal - Install GCP sdk
 ``` commandline
@@ -68,6 +76,10 @@ https://console.cloud.google.com/home/dashboard?authuser=1&inv=1&invt=Ab4uJg&pro
 
 After execute all command line will get `terraform-ci.json`
 ![terraform-ci-json.png](readme/terraform-ci-json.png)
+
+Double check IAM role
+https://console.cloud.google.com/iam-admin/iam?authuser=2&inv=1&invt=Ab4whg&project=terraform-practice-250806
+![iam-role.png](readme/iam-role.png)
 
 ## Github - Setup Repository secrets
 Repo → Settings → Secret and variables → Action → Repository secrets → New repository secret

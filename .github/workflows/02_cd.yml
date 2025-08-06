@@ -32,5 +32,5 @@ jobs:
         run: make run-terraform-plan
       - name: build-and-push-docker-image-to-artifact-registry
         run: make run-docker-push-to-artifact-registry
-      - name: terraform-apply-w-image
+      - name: terraform-apply
         run: make run-terraform-apply
