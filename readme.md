@@ -12,35 +12,17 @@ https://console.cloud.google.com/welcome/new?authuser=1&pli=1&inv=1&invt=Ab4uGA
 ![project-name.png](readme/project-name.png)
 
 
-### Google Cloud - Enable the permission 
-Go to api library <br>
-https://console.cloud.google.com/apis/library?authuser=1&inv=1&invt=Ab4uGA&project=terraform-practice-250806
+### Local Terminal - Enable Google API
+Prepare `deployment/terraform/enable.tf` <br>
+Execute command
+``` commandline
+$ make run-terraform-first-time-enable-tf
+```
+![enable-google-api.png](readme/enable-google-api.png)
 
-Enable those permission item
-
-- admin sdk api
-https://console.cloud.google.com/marketplace/product/google/admin.googleapis.com?q=search&referrer=search&authuser=1&inv=1&invt=Ab4uGA&project=terraform-practice-250806
-![admin-sdk-enable.png](readme/admin-sdk-enable.png)
-
-- cloud run admin api
-https://console.cloud.google.com/apis/library/run.googleapis.com?authuser=1&inv=1&invt=Ab4uGA&project=terraform-practice-250806
-![cloud-run-admin.png](readme/cloud-run-admin.png)
-
-- artifact registry api
-https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com?inv=1&invt=Ab4uJg&authuser=1&project=terraform-practice-250806
-![artifact-registry-api.png](readme/artifact-registry-api.png)
-
-- cloud sql admin api
-https://console.cloud.google.com/apis/library/sqladmin.googleapis.com?inv=1&invt=Ab4vHw&authuser=1&project=terraform-practice-250806
-![cloud-sql-admin-api.png](readme/cloud-sql-admin-api.png)
-
-- compute engine api
-https://console.cloud.google.com/apis/library/compute.googleapis.com?inv=1&invt=Ab4whg&authuser=2&project=terraform-practice-250806
-![compute-engine.png](readme/compute-engine.png)
-
-- cloud resource manager api
-https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com?inv=1&invt=Ab4wig&authuser=2&project=terraform-practice-250806
-![cloud-resource-manager.png](readme/cloud-resource-manager.png)
+Check the service <br>
+https://console.cloud.google.com/apis/library?authuser=2&hl=en-GB&inv=1&invt=Ab4w3g&project=terraform-practice-250806
+![enable-google-api.png](readme/enable-google-api.png)
 
   
 ### Local Terminal - Install GCP sdk

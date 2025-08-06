@@ -31,6 +31,9 @@ resource "google_project_service" "service_networking" {
 resource "google_compute_network" "vpc_network" {
   name                    = "main-vpc"
   auto_create_subnetworks = true
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_compute_global_address" "private_ip_alloc" {
@@ -40,6 +43,9 @@ resource "google_compute_global_address" "private_ip_alloc" {
   address_type  = "INTERNAL"
   prefix_length = 16
   network       = google_compute_network.vpc_network.id
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_service_networking_connection" "private_vpc_connection" {

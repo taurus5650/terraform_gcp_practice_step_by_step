@@ -25,6 +25,14 @@ run-docker-push-to-artifact-registry:
 print-image-uri:
 	@echo "Image URI: $(IMAGE_URI)"
 
+run-terraform-first-time-enable-tf:
+	cd $(TF_DIR) && terraform init && terraform apply -auto-approve \
+	-target=google_project_service.artifact_registry \
+	-target=google_project_service.cloud_run \
+	-target=google_project_service.sqladmin \
+	-target=google_project_service.compute \
+	-target=google_project_service.servicenetworking
+
 run-terraform-init:
 	cd $(TF_DIR) && terraform init
 
