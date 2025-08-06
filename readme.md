@@ -11,6 +11,12 @@ https://console.cloud.google.com/welcome/new?authuser=1&pli=1&inv=1&invt=Ab4uGA
 ![new-project.png](readme/new-project.png)
 ![project-name.png](readme/project-name.png)
 
+### Google Cloud - Enable Google API
+
+https://console.cloud.google.com/apis/library?authuser=2&hl=en-GB&inv=1&invt=Ab4w3g&project=terraform-practice-250806
+
+- Service Usage API
+![service-usage-api-enable.png](readme/service-usage-api-enable.png)
 
 ### Local Terminal - Enable Google API
 Prepare `deployment/terraform/enable.tf` <br>
@@ -79,6 +85,8 @@ Repo → Settings → Secret and variables → Action → Repository secrets →
 
 ![github-action-secret.png](readme/github-action-secret.png)
 
-### Repo - Setup github action & terraform & makefile
-Follow the repo's documentation
+### Repo - github action & terraform & makefile
+1. Follow the repo's documentation
+2. Developingggg
+3. Push to master, started deployment automatically
 
