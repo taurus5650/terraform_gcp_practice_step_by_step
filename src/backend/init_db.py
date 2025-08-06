@@ -14,7 +14,7 @@ def init_db():
     db.metadata.create_all(engine)
 
     with engine.connect() as conn:
-        result = conn.execute('SELECT COUNT(*) FROM user')
+        result = conn.execute('SELECT COUNT(*) FROM order')
         if result.scalar() == 0:
             conn.execute(User.__table__.insert(), [{"name": "admin"}])
             print("✅ Seed data inserted")

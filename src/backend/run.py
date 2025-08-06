@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from config import SQLALCHEMY_DATABASE_URI
-from models import db, User
+from models import db, Order
 import os
 
 app = Flask(__name__)
