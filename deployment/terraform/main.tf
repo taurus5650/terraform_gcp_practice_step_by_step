@@ -18,7 +18,7 @@ provider "google" {
 resource "google_artifact_registry_repository" "repo" {
   # This repo will be used to push Docker images for Cloud Run deployment
   location = var.region
-  repository_id = "terrform-practice-repo"
+  repository_id = "terraform-practice-repo"
   format = "DOCKER"
 }
 
