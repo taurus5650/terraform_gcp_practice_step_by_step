@@ -1,10 +1,10 @@
-## Google Console Cloud - Create new project
+## Google Cloud - Create new project
 https://console.cloud.google.com/welcome/new?authuser=1&pli=1&inv=1&invt=Ab4uGA
 ![new-project.png](readme/new-project.png)
 ![project-name.png](readme/project-name.png)
 
 
-## Google Console Cloud - Enable the permission 
+## Google Cloud - Enable the permission 
 go to api library 
 https://console.cloud.google.com/apis/library?authuser=1&inv=1&invt=Ab4uGA&project=terraform-practice-250806
 
@@ -19,6 +19,10 @@ https://console.cloud.google.com/apis/library/run.googleapis.com?authuser=1&inv=
 artifact registry api
 https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com?inv=1&invt=Ab4uJg&authuser=1&project=terraform-practice-250806
 ![artifact-registry-api.png](readme/artifact-registry-api.png)
+
+cloud sql admin api
+https://console.cloud.google.com/apis/library/sqladmin.googleapis.com?inv=1&invt=Ab4vHw&authuser=1&project=terraform-practice-250806
+![cloud-sql-admin-api.png](readme/cloud-sql-admin-api.png)
 
 ## Local Terminal - Install GCP sdk
 ``` commandline
@@ -44,6 +48,11 @@ $ gcloud iam service-accounts create $ACCOUNT_NAME \
 $ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:$ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
   --role="roles/admin"
+
+# CloudSql grant permission
+gcloud projects add-iam-policy-binding terraform-practice-250806 \
+  --member="serviceAccount:terraform-ci-account@terraform-practice-250806.iam.gserviceaccount.com" \
+  --role="roles/cloudsql.admin"
  
 # Genarate token
 $ gcloud iam service-accounts keys create terraform-ci.json \
@@ -61,3 +70,6 @@ Repo → Settings → Secret and variables → Action → Repository secrets →
 - Name = GCP_CREDENTIALS
 - Secret = {terraform-ci.json}
 ![github-action-secret.png](readme/github-action-secret.png)
+
+## Google Cloud - Create service
+

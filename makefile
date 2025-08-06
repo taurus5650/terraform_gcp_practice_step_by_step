@@ -1,14 +1,44 @@
-dev:
-	docker-compose -f deployment/docker-compose-dev-local.yml --env-file .env up --build
+DEPLOYMENT = deployment/
+DOCKER_DEV = docker-compose-dev-local.yml
+DOCKER_FILE = Dockerfile
 
-tf-init:
-	cd deployment/terraform && terraform init
+GCP_PROJECT_ID = terraform-practice-250806
+TF_DIR = $(DEPLOYMENT)/terraform
+TF_REPO = terrform-practice-repo
+ASIA_PKG = asia-east1-docker.pkg.dev
 
-tf-apply:
-	cd deployment/terraform && terraform apply -auto-approve
+IMAGE_NAME = terraform-practice-image
+IMAGE_TAG = latest
+IMAGE_URI = $(ASIA_PKG)/$(GCP_PROJECT_ID)/$(TF_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
-# Dev
-docker-compose -f deployment/docker-compose.dev.yml --env-file .env.dev up
+run-dev-docker:
+	docker compose -f $(DEPLOYMENT)$(DOCKER_DEV) down
+	docker image prune -f
+	docker compose -f $(DEPLOYMENT)$(DOCKER_DEV) up --build
+	docker ps
 
-# Prod Build
-docker-compose -f deployment/docker-compose.prod.yml --env-file .env.prod build
+run-docker-push-to-artifact-registry:
+	gcloud auth configure-docker $(ASIA_PKG)
+	docker build -f $(DEPLOYMENT)$(DOCKER_FILE) -t $(IMAGE_URI) .
+	docker push $(IMAGE_URI)
+
+print-image-uri:
+	@echo "Image URI: $(IMAGE_URI)"
+
+run-terraform-init:
+	cd $(TF_DIR) && terraform init
+
+run-terraform-validate:
+	cd $(TF_DIR) && terraform validate
+
+run-terraform-fmt:
+	cd $(TF_DIR) && terraform fmt -recursive
+
+run-terraform-plan:
+	cd $(TF_DIR) && terraform plan
+
+run-terraform-apply:
+	cd $(TF_DIR) && terraform apply -auto-approve
+
+run-terraform-destroy:
+	cd $(TF_DIR) && terraform destroy -auto-approve

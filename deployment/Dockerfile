@@ -1,9 +1,17 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
+
+ENV TZ=Asia/Taipei
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-COPY src/backend /app
+COPY requirement.txt ./
+RUN pip install --upgrade pip
+RUN pip install -r requirement.txt
 
-RUN pip install flask flask_sqlalchemy pymysql
+# COPY all source code
+COPY . .
+
+RUN ls -la /app/src/backend
 
 CMD ["python", "run.py"]
