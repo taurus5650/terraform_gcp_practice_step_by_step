@@ -6,7 +6,10 @@ GCP_PROJECT_ID := terraform-practice-250806
 TF_DIR := $(DEPLOYMENT)/terraform
 TF_REPO := terraform-practice-repo
 ASIA_PKG := asia-east1-docker.pkg.dev
+
 SQL_INSTANCE_NAME := flask-db-instance
+DB_NAME := flask-db
+DB_USER := flask
 
 IMAGE_NAME := terraform-practice-image
 IMAGE_TAG := latest
@@ -70,23 +73,23 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 	# Cloud SQL User
 	cd $(TF_DIR) && terraform import \
 		google_sql_user.user \
-		projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)/users/$(DB_USER) || true
+		$(GCP_PROJECT_ID)/$(SQL_INSTANCE_NAME)/%/$(DB_USER) || true
 
 	# Cloud Run Service
 	cd $(TF_DIR) && terraform import \
 		google_cloud_run_service.flask_service \
-		projects/$(GCP_PROJECT_ID)/locations/asia-east1/services/flask-api || true
+		asia-east1/flask-api || true
 
+	# Cloud Run IAM Public Access
 	# Cloud Run IAM Public Access
 	cd $(TF_DIR) && terraform import \
 		google_cloud_run_service_iam_member.public \
-		projects/$(GCP_PROJECT_ID)/locations/asia-east1/services/flask-api/roles/run.invoker/allUsers || true
+		"projects/$(GCP_PROJECT_ID)/locations/asia-east1/services/flask-api roles/run.invoker allUsers" || true
 
 	# VPC Network
 	cd $(TF_DIR) && terraform import \
 		google_compute_network.vpc_network \
 		projects/$(GCP_PROJECT_ID)/global/networks/main-vpc || true
-
 
 run-terraform-apply:
 	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars
