@@ -37,41 +37,42 @@ run-terraform-fmt:
 run-terraform-plan:
 	cd $(TF_DIR) && terraform plan
 
-run-terraform-import-all: # Telling GCP that Terraform will handling management these GCP feature
+run-terraform-import-all: # Telling GCP that Terraform will handle these GCP resources
 	# Artifact Registry
 	cd $(TF_DIR) && terraform import \
 		google_artifact_registry_repository.repo \
-		projects/$(GCP_PROJECT_ID)/locations/asia-east1/repositories/$(TF_REPO)
+		projects/$(GCP_PROJECT_ID)/locations/asia-east1/repositories/$(TF_REPO) || true
 
 	# Private IP Allocation
 	cd $(TF_DIR) && terraform import \
 		google_compute_global_address.private_ip_alloc \
-		projects/$(GCP_PROJECT_ID)/global/addresses/private-ip-allocation
+		projects/$(GCP_PROJECT_ID)/global/addresses/private-ip-allocation || true
 
 	# Cloud SQL Instance
 	cd $(TF_DIR) && terraform import \
 		google_sql_database_instance.instance \
-		$(GCP_PROJECT_ID):asia-east1:flask-db-instance
+		$(GCP_PROJECT_ID):asia-east1:flask-db-instance || true
 
 	# Cloud SQL Database
 	cd $(TF_DIR) && terraform import \
 		google_sql_database.flask_db \
-		$(GCP_PROJECT_ID)/flask-db-instance/flask-db
+		$(GCP_PROJECT_ID)/flask-db-instance/flask-db || true
 
 	# Cloud SQL User
 	cd $(TF_DIR) && terraform import \
 		google_sql_user.user \
-		$(GCP_PROJECT_ID)/flask-db-instance/flask
+		$(GCP_PROJECT_ID)/flask-db-instance/flask || true
 
 	# Cloud Run Service
 	cd $(TF_DIR) && terraform import \
 		google_cloud_run_service.flask_service \
-		projects/$(GCP_PROJECT_ID)/locations/asia-east1/services/flask-api
+		projects/$(GCP_PROJECT_ID)/locations/asia-east1/services/flask-api || true
 
 	# Cloud Run IAM Public Access
 	cd $(TF_DIR) && terraform import \
 		google_cloud_run_service_iam_member.public \
-		projects/$(GCP_PROJECT_ID)/locations/asia-east1/services/flask-api/roles/run.invoker/allUsers
+		projects/$(GCP_PROJECT_ID)/locations/asia-east1/services/flask-api/roles/run.invoker/allUsers || true
+
 
 run-terraform-apply:
 	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars
