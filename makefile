@@ -38,10 +38,10 @@ run-terraform-plan:
 	cd $(TF_DIR) && terraform plan
 
 run-terraform-apply-infra-only:
-	cd $(TF_DIR) && terraform apply -auto-approve -var-file=terraform.tfvars.tf -target=google_artifact_registry_repository.repo
+	cd $(TF_DIR) && terraform apply -auto-approve -var-file=terraform.tfvars -target=google_artifact_registry_repository.repo
 
 run-terraform-apply:
-	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars.tf
+	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars
 
 run-terraform-destroy:
 	@echo "⚠️ Are you sure you want to destroy everything? Press Ctrl+C to cancel."
