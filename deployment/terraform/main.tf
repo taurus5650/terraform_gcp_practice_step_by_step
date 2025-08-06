@@ -28,6 +28,7 @@ resource "google_project_service" "service_networking" {
   service = "servicenetworking.googleapis.com"
 }
 
+network = google_compute_network.vpc_network.id
 resource "google_compute_network" "vpc_network" {
   name                    = "main-vpc"
   auto_create_subnetworks = true
