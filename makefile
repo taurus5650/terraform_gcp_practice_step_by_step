@@ -1,15 +1,15 @@
-DEPLOYMENT = deployment/
-DOCKER_DEV = docker-compose-dev-local.yml
-DOCKER_FILE = Dockerfile
+DEPLOYMENT := deployment/
+DOCKER_DEV := docker-compose-dev-local.yml
+DOCKER_FILE := Dockerfile
 
-GCP_PROJECT_ID = terraform-practice-250806
-TF_DIR = $(DEPLOYMENT)/terraform
-TF_REPO = terraform-practice-repo
-ASIA_PKG = asia-east1-docker.pkg.dev
+GCP_PROJECT_ID := terraform-practice-250806
+TF_DIR := $(DEPLOYMENT)/terraform
+TF_REPO := terraform-practice-repo
+ASIA_PKG := asia-east1-docker.pkg.dev
 
-IMAGE_NAME = terraform-practice-image
-IMAGE_TAG = latest
-IMAGE_URI = $(ASIA_PKG)/$(GCP_PROJECT_ID)/$(TF_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
+IMAGE_NAME := terraform-practice-image
+IMAGE_TAG := latest
+IMAGE_URI := $(ASIA_PKG)/$(GCP_PROJECT_ID)/$(TF_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
 run-dev-docker:
 	docker compose -f $(DEPLOYMENT)$(DOCKER_DEV) down
