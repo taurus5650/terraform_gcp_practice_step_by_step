@@ -12,8 +12,10 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
       - FLASK_DEBUG=true
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-creds.json
     volumes:
       - ../:/terraform-gcp-practice-app
+      - ../gcp-creds.json:/secrets/gcp-creds.json:ro
     depends_on:
       - cloudsql-proxy
     networks:
