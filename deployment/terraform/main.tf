@@ -140,6 +140,12 @@ resource "google_cloud_run_service" "flask_service" {
           name  = "DB_HOST"
           value = "/cloudsql/${google_sql_database_instance.instance.connection_name}"
         }
+
+        env {
+          name  = "INSTANCE_CONNECTION_NAME"
+          value = google_sql_database_instance.instance.connection_name
+        }
+
       }
     }
   }
