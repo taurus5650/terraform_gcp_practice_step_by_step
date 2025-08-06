@@ -63,8 +63,8 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 
 	# Cloud SQL Database
 	cd $(TF_DIR) && terraform import \
-		google_sql_database.flask_db \
-		$(GCP_PROJECT_ID)/flask-db-instance/flask-db || true
+	google_sql_database_instance.instance \
+	projects/$(GCP_PROJECT_ID)/instances/flask-db-instance || true
 
 	# Cloud SQL User
 	cd $(TF_DIR) && terraform import \
