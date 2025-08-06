@@ -38,7 +38,7 @@ run-terraform-plan:
 	cd $(TF_DIR) && terraform plan
 
 run-terraform-apply:
-	cd $(TF_DIR) && terraform apply -auto-approve
+	cd $(TF_DIR) && terraform apply -auto-approve -var-file=prod.tfvars
 
 run-terraform-destroy:
 	cd $(TF_DIR) && terraform destroy -auto-approve

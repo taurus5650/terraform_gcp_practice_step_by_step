@@ -4,3 +4,10 @@ gcp-creds.json
 __pycache__/
 *.pyc
 db.sqlite3
+*.tfvars
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform.tfvars
+prod.tfvars
+dev.tfvars
