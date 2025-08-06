@@ -37,6 +37,23 @@ run-terraform-fmt:
 run-terraform-plan:
 	cd $(TF_DIR) && terraform plan
 
+run-terraform-import-all:
+    # Telling GCP, terraform will help to manage
+    # artifact-registry:
+    cd $(TF_DIR) && terraform import \
+        google_artifact_registry_repository.repo \
+        projects/$(GCP_PROJECT_ID)/locations/asia-east1/repositories/$(TF_REPO)
+
+    # private-ip-alloc:
+    cd $(TF_DIR) && terraform import \
+        google_compute_global_address.private_ip_alloc \
+        projects/$(GCP_PROJECT_ID)/global/addresses/private-ip-allocation
+
+    # cloudsql-instance:
+    cd $(TF_DIR) && terraform import \
+        google_sql_database_instance.instance \
+        $(GCP_PROJECT_ID):asia-east1:flask-db-instance
+
 run-terraform-apply:
 	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars
 
