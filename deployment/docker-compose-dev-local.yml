@@ -22,6 +22,7 @@ services:
     image: gcr.io/cloudsql-docker/gce-proxy:1.33.6
     command:
       - "/cloud_sql_proxy"
+      - "-ip_address_types=PUBLIC"
       - "-instances=terraform-practice-250806:asia-east1:flask-db-instance=tcp:0.0.0.0:3306"
       - "-credential_file=/config/key.json"
     volumes:
