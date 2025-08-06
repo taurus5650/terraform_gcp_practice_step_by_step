@@ -18,6 +18,8 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
       - name: install-terraform
         uses: hashicorp/setup-terraform@v3
+      - name: terraform-init
+        run: make run-terraform-init
       - name: terraform-fmt
         run: make run-terraform-fmt
       - name: terraform-validate
