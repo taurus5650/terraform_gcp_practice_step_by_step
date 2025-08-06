@@ -42,8 +42,11 @@ resource "google_service_networking_connection" "private_vpc_connection" {
   network                 = var.vpc_network
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
+  depends_on = [
+    google_compute_global_address.private_ip_alloc,
+    google_project_service.service_networking
+  ]
 
-  depends_on = [google_project_service.service_networking]
 }
 
 resource "google_sql_database_instance" "instance" {

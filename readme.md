@@ -1,48 +1,56 @@
-## Google Cloud - Create new project
-https://console.cloud.googl
-e.com/welcome/new?authuser=1&pli=1&inv=1&invt=Ab4uGA
+# Terraform & Google Cloud practice step by step
+
+Here's the practice of Terraform (IaC) & Google Cloud with Python Flask.
+
+## Operation
+
+### Google Cloud - Create new project
+
+https://console.cloud.google.com/welcome/new?authuser=1&pli=1&inv=1&invt=Ab4uGA
+
 ![new-project.png](readme/new-project.png)
 ![project-name.png](readme/project-name.png)
 
 
-## Google Cloud - Enable the permission 
-go to api library 
+### Google Cloud - Enable the permission 
+Go to api library <br>
 https://console.cloud.google.com/apis/library?authuser=1&inv=1&invt=Ab4uGA&project=terraform-practice-250806
 
-admin sdk api
+Enable those permission item
+
+- admin sdk api
 https://console.cloud.google.com/marketplace/product/google/admin.googleapis.com?q=search&referrer=search&authuser=1&inv=1&invt=Ab4uGA&project=terraform-practice-250806
 ![admin-sdk-enable.png](readme/admin-sdk-enable.png)
 
-cloud run admin api
+- cloud run admin api
 https://console.cloud.google.com/apis/library/run.googleapis.com?authuser=1&inv=1&invt=Ab4uGA&project=terraform-practice-250806
 ![cloud-run-admin.png](readme/cloud-run-admin.png)
 
-artifact registry api
+- artifact registry api
 https://console.cloud.google.com/apis/library/artifactregistry.googleapis.com?inv=1&invt=Ab4uJg&authuser=1&project=terraform-practice-250806
 ![artifact-registry-api.png](readme/artifact-registry-api.png)
 
-cloud sql admin api
+- cloud sql admin api
 https://console.cloud.google.com/apis/library/sqladmin.googleapis.com?inv=1&invt=Ab4vHw&authuser=1&project=terraform-practice-250806
 ![cloud-sql-admin-api.png](readme/cloud-sql-admin-api.png)
 
-compute engine api
+- compute engine api
 https://console.cloud.google.com/apis/library/compute.googleapis.com?inv=1&invt=Ab4whg&authuser=2&project=terraform-practice-250806
 ![compute-engine.png](readme/compute-engine.png)
 
-cloud resource manager api
+- cloud resource manager api
 https://console.cloud.google.com/apis/library/cloudresourcemanager.googleapis.com?inv=1&invt=Ab4wig&authuser=2&project=terraform-practice-250806
 ![cloud-resource-manager.png](readme/cloud-resource-manager.png)
 
+  
+### Local Terminal - Install GCP sdk
 
-
-
-## Local Terminal - Install GCP sdk
 ``` commandline
 $ brew install --cask google-cloud-sdk
 ```
 
-## Local Terminal - Setup GCP account token
-command line
+### Local Terminal - Setup GCP account token
+
 ``` commandline
 # Export the environment value
 $ export PROJECT_ID=YOUR_PROJECT_ID (e.g. export PROJECT_ID=terraform-practice-250806
@@ -70,22 +78,25 @@ gcloud projects add-iam-policy-binding terraform-practice-250806 \
 $ gcloud iam service-accounts keys create terraform-ci.json \
   --iam-account=$ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com
 ```
-How to get PROJECT_ID
+
+How to get PROJECT_ID <br>
 https://console.cloud.google.com/home/dashboard?authuser=1&inv=1&invt=Ab4uJg&project=terraform-practice-250806
 ![gcp-project-id.png](readme/gcp-project-id.png)
 
 After execute all command line will get `terraform-ci.json`
 ![terraform-ci-json.png](readme/terraform-ci-json.png)
 
-Double check IAM role
+Double check IAM role <br>
 https://console.cloud.google.com/iam-admin/iam?authuser=2&inv=1&invt=Ab4whg&project=terraform-practice-250806
 ![iam-role.png](readme/iam-role.png)
 
-## Github - Setup Repository secrets
+### Github - Setup Repository secrets
 Repo → Settings → Secret and variables → Action → Repository secrets → New repository secret
 - Name = GCP_CREDENTIALS
 - Secret = {terraform-ci.json}
+
 ![github-action-secret.png](readme/github-action-secret.png)
 
-## Google Cloud - Create service
+### Repo - Setup github action & terraform & makefile
+Follow the repo's documentation
 
