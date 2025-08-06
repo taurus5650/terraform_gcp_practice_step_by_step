@@ -6,6 +6,7 @@ GCP_PROJECT_ID := terraform-practice-250806
 TF_DIR := $(DEPLOYMENT)/terraform
 TF_REPO := terraform-practice-repo
 ASIA_PKG := asia-east1-docker.pkg.dev
+SQL_INSTANCE_NAME := flask-db-instance
 
 IMAGE_NAME := terraform-practice-image
 IMAGE_TAG := latest
@@ -56,20 +57,20 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 		google_compute_global_address.private_ip_alloc \
 		projects/$(GCP_PROJECT_ID)/global/addresses/private-ip-allocation || true
 
-	# Cloud SQL Instance
-	cd $(TF_DIR) && terraform import \
+    # Cloud SQL Instance
+    cd $(TF_DIR) && terraform import \
 		google_sql_database_instance.instance \
-		$(GCP_PROJECT_ID):asia-east1:flask-db-instance || true
+		projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME) || true
 
-	# Cloud SQL Database
+    # Cloud SQL Database
 	cd $(TF_DIR) && terraform import \
-	google_sql_database_instance.instance \
-	projects/$(GCP_PROJECT_ID)/instances/flask-db-instance || true
+		google_sql_database.flask_db \
+		projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)/databases/$(DB_NAME) || true
 
-	# Cloud SQL User
+    # Cloud SQL User
 	cd $(TF_DIR) && terraform import \
 		google_sql_user.user \
-		$(GCP_PROJECT_ID)/flask-db-instance/flask || true
+		projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)/users/$(DB_USER) || true
 
 	# Cloud Run Service
 	cd $(TF_DIR) && terraform import \
