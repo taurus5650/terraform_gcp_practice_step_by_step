@@ -8,7 +8,7 @@ TF_REPO := terraform-practice-repo
 ASIA_PKG := asia-east1-docker.pkg.dev
 
 SQL_INSTANCE_NAME := flask-db-instance
-DB_NAME := flask-db
+DB_NAME := flask_db
 DB_USER := flask
 
 IMAGE_NAME := terraform-practice-image
@@ -80,7 +80,6 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 		google_cloud_run_service.flask_service \
 		asia-east1/flask-api || true
 
-	# Cloud Run IAM Public Access
 	# Cloud Run IAM Public Access
 	cd $(TF_DIR) && terraform import \
 		google_cloud_run_service_iam_member.public \
