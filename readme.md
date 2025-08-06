@@ -24,6 +24,10 @@ cloud sql admin api
 https://console.cloud.google.com/apis/library/sqladmin.googleapis.com?inv=1&invt=Ab4vHw&authuser=1&project=terraform-practice-250806
 ![cloud-sql-admin-api.png](readme/cloud-sql-admin-api.png)
 
+compute engine api
+https://console.cloud.google.com/apis/library/compute.googleapis.com?inv=1&invt=Ab4whg&authuser=2&project=terraform-practice-250806
+![compute-engine.png](readme/compute-engine.png)
+
 ## Local Terminal - Install GCP sdk
 ``` commandline
 $ brew install --cask google-cloud-sdk
