@@ -66,6 +66,8 @@ resource "google_sql_database_instance" "instance" {
       private_network = google_compute_network.vpc_network.id
     }
   }
+
+  depends_on = [google_service_networking_connection.private_vpc_connection]
 }
 
 resource "google_sql_database" "flask_db" {
