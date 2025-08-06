@@ -12,7 +12,7 @@ services:
       - DB_NAME=flask_db
       - DB_HOST=cloudsql-proxy
     volumes:
-      - ../src/backend:/app
+      - ../:/flask-app
     depends_on:
       - cloudsql-proxy
 
