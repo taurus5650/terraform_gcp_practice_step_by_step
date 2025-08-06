@@ -59,6 +59,13 @@ resource "google_service_networking_connection" "private_vpc_connection" {
   ]
 }
 
+resource "google_project_iam_member" "cloudsql_client_binding" {
+  # Grant the SQL permmision to Cloud Run
+  project = var.project_id
+  role    = "roles/cloudsql.client"
+  member  = "serviceAccount:${google_service_account.cloud_run_sa.email}"
+}
+
 resource "google_sql_database_instance" "instance" {
   # Create a Cloud SQL instance running MySQL 8.0 in the specified region
   name = "flask-db-instance"
@@ -89,8 +96,15 @@ resource "google_sql_user" "user" {
   password = var.db_password
 }
 
+
+resource "google_service_account" "cloud_run_sa" {
+  # Create a service account for Cloud Run
+  account_id   = "cloud-run-service-account"
+  display_name = "Cloud Run Service Account"
+}
+
 resource "google_cloud_run_service" "flask_service" {
-  # Deploy Docker image to Cloud Run.
+  # Deploy docker image to Cloud Run
   name     = "flask-api"
   location = var.region
 
@@ -102,11 +116,18 @@ resource "google_cloud_run_service" "flask_service" {
     }
 
     spec {
+      service_account_name = google_service_account.cloud_run_sa.email
+
       containers {
         image = var.image_url
 
         ports {
           container_port = 5000
+        }
+
+        env {
+          name  = "PORT"
+          value = "5000"
         }
 
         env {
@@ -123,7 +144,6 @@ resource "google_cloud_run_service" "flask_service" {
         }
         env {
           name  = "DB_HOST"
-          # Cloud SQL use unix socket
           value = "/cloudsql/${google_sql_database_instance.instance.connection_name}"
         }
       }
