@@ -28,6 +28,11 @@ resource "google_project_service" "service_networking" {
   service = "servicenetworking.googleapis.com"
 }
 
+resource "google_compute_network" "vpc_network" {
+  name                    = "main-vpc"
+  auto_create_subnetworks = true
+}
+
 resource "google_compute_global_address" "private_ip_alloc" {
   # Assign internal IP range to Cloud SQL
   name          = "private-ip-allocation"
@@ -46,7 +51,6 @@ resource "google_service_networking_connection" "private_vpc_connection" {
     google_compute_global_address.private_ip_alloc,
     google_project_service.service_networking
   ]
-
 }
 
 resource "google_sql_database_instance" "instance" {

@@ -37,7 +37,7 @@ run-terraform-fmt:
 run-terraform-plan:
 	cd $(TF_DIR) && terraform plan
 
-run-terraform-import-all: # Telling GCP that Terraform will handle these GCP resources
+run-terraform-import-all: # Telling GCP that Terraform will handle these GCP resources ; Accept error and keep running github action
 	# Artifact Registry
 	cd $(TF_DIR) && terraform import \
 		google_artifact_registry_repository.repo \
