@@ -63,7 +63,7 @@ resource "google_sql_database_instance" "instance" {
     tier = "db-f1-micro"
     ip_configuration {
       ipv4_enabled = false
-      private_network = var.vpc_network
+      private_network = google_compute_network.vpc_network.id
     }
   }
 }
@@ -136,7 +136,3 @@ resource "google_cloud_run_service_iam_member" "public" {
   role    = "roles/run.invoker"
   member  = "allUsers"
 }
-
-
-
-
