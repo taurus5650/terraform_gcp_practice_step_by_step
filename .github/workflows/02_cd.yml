@@ -30,8 +30,6 @@ jobs:
         run: make run-terraform-init
       - name: terraform-plan
         run: make run-terraform-plan
-      - name: terraform-apply-infra-only
-        run: make run-terraform-apply-infra-only
       - name: build-and-push-docker-image-to-artifact-registry
         run: make run-docker-push-to-artifact-registry
       - name: terraform-apply-w-image
