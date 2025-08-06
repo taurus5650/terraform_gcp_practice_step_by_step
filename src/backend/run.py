@@ -14,10 +14,10 @@ db.init_app(app)
 def hello():
     return jsonify(message="Flask + Cloud SQL API")
 
-@app.route("/users")
-def users():
-    users = User.query.all()
-    return jsonify([{"id": u.id, "name": u.name} for u in users])
+@app.route("/order")
+def order():
+    orders = Order.query.all()
+    return jsonify([{"id": o.id, "name": o.name} for o in orders])
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
