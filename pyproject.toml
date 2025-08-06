@@ -1,0 +1,21 @@
+[project]
+name = "terraform-practice"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "shyin.lim.jkopay",email = "shyin.lim@jkopay.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flask (>=3.1.1,<4.0.0)",
+    "pytest (>=8.4.1,<9.0.0)",
+    "flask-sqlalchemy (>=3.1.1,<4.0.0)",
+    "requests (>=2.32.4,<3.0.0)",
+    "pymysql (>=1.1.1,<2.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

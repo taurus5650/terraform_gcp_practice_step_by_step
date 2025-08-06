@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  flask-app:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=flask_db
+      - DB_HOST=cloudsql-proxy
+    volumes:
+      - ../src/backend:/app
+    depends_on:
+      - cloudsql-proxy
+
+  cloudsql-proxy:
+    image: gcr.io/cloudsql-docker/gce-proxy:1.33.6
+    command:
+      - "/cloud_sql_proxy"
+      - "-instances=${INSTANCE_CONNECTION_NAME}=tcp:3306"
+      - "-credential_file=/config/key.json"
+    volumes:
+      - ../gcp-creds.json:/config/key.json:ro

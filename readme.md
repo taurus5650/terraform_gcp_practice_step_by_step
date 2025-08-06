@@ -52,3 +52,12 @@ $ gcloud iam service-accounts keys create terraform-ci.json \
 How to get PROJECT_ID
 https://console.cloud.google.com/home/dashboard?authuser=1&inv=1&invt=Ab4uJg&project=terraform-practice-250806
 ![gcp-project-id.png](readme/gcp-project-id.png)
+
+After execute all command line will get `terraform-ci.json`
+![terraform-ci-json.png](readme/terraform-ci-json.png)
+
+## Github - Setup Repository secrets
+Repo → Settings → Secret and variables → Action → Repository secrets → New repository secret
+- Name = GCP_CREDENTIALS
+- Secret = {terraform-ci.json}
+![github-action-secret.png](readme/github-action-secret.png)
