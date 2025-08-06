@@ -28,10 +28,10 @@ jobs:
         uses: hashicorp/setup-terraform@v3
       - name: terraform-init
         run: make run-terraform-init
-      - name: terraform-plan
-        run: make run-terraform-plan
       - name: terraform-import
         run: make run-terraform-import-all
+      - name: terraform-plan
+        run: make run-terraform-plan
       - name: build-and-push-docker-image-to-artifact-registry
         run: make run-docker-push-to-artifact-registry
       - name: terraform-apply

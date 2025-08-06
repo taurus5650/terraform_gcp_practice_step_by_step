@@ -11,29 +11,6 @@ https://console.cloud.google.com/welcome/new?authuser=1&pli=1&inv=1&invt=Ab4uGA
 ![new-project.png](readme/new-project.png)
 ![project-name.png](readme/project-name.png)
 
-### Google Cloud - Enable Google API
-
-https://console.cloud.google.com/apis/library?authuser=2&hl=en-GB&inv=1&invt=Ab4w3g&project=terraform-practice-250806
-
-- Service Usage API
-![service-usage-api-enable.png](readme/service-usage-api-enable.png)
-
-- Cloud Resource Manager API
-![cloud-resource-manage-api-enable.png](readme/cloud-resource-manage-api-enable.png)
-
-### Local Terminal - Enable Google API
-Prepare `deployment/terraform/enable.tf` <br>
-Execute command
-``` commandline
-$ make run-terraform-first-time-enable-tf
-```
-![enable-google-api.png](readme/enable-google-api.png)
-
-Check the service <br>
-https://console.cloud.google.com/apis/library?authuser=2&hl=en-GB&inv=1&invt=Ab4w3g&project=terraform-practice-250806
-![enable-google-api.png](readme/enable-google-api.png)
-
-  
 ### Local Terminal - Install GCP sdk
 
 ``` commandline
@@ -87,6 +64,28 @@ Repo → Settings → Secret and variables → Action → Repository secrets →
 - Secret = {terraform-ci.json}
 
 ![github-action-secret.png](readme/github-action-secret.png)
+
+### Google Cloud - Enable Google API
+
+https://console.cloud.google.com/apis/library?authuser=2&hl=en-GB&inv=1&invt=Ab4w3g&project=terraform-practice-250806
+
+- Service Usage API
+![service-usage-api-enable.png](readme/service-usage-api-enable.png)
+
+- Cloud Resource Manager API
+![cloud-resource-manage-api-enable.png](readme/cloud-resource-manage-api-enable.png)
+
+### Local Terminal - Enable Google API
+Prepare `deployment/terraform/enable.tf` <br>
+Execute command
+``` commandline
+$ make run-terraform-first-time-enable-tf
+```
+![enable-google-api.png](readme/enable-google-api.png)
+
+Check the service <br>
+https://console.cloud.google.com/apis/library?authuser=2&hl=en-GB&inv=1&invt=Ab4w3g&project=terraform-practice-250806
+![enable-google-api.png](readme/enable-google-api.png)
 
 ### Repo - github action & terraform & makefile
 1. Follow the repo's documentation
