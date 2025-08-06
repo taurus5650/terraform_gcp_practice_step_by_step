@@ -23,7 +23,7 @@ run-dev-docker:
 
 run-docker-push-to-artifact-registry:
 	gcloud auth configure-docker $(ASIA_PKG)
-	docker build --platform linux/amd64 -f $(DEPLOYMENT)$(DOCKER_FILE) -t $(IMAGE_URI) .
+	docker build --platform=linux/amd64 -f $(DEPLOYMENT)$(DOCKER_FILE) -t $(IMAGE_URI) .
 	docker push $(IMAGE_URI)
 
 print-image-uri:

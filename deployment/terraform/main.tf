@@ -111,6 +111,7 @@ resource "google_cloud_run_service" "flask_service" {
     metadata {
       annotations = {
         "run.googleapis.com/cloudsql-instances" = google_sql_database_instance.instance.connection_name
+        "force-redeploy" = timestamp()
       }
     }
 

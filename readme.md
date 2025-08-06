@@ -94,7 +94,7 @@ https://console.cloud.google.com/apis/library?authuser=2&hl=en-GB&inv=1&invt=Ab4
 
 
 ### Google Cloud - Edit DB to public IP
-
+Which for develop in LOCAL <br>
 https://console.cloud.google.com/sql/instances?authuser=2&inv=1&invt=Ab4xXw&project=terraform-practice-250806
 ![db-public-ip-first-time.png](readme/db-public-ip-first-time.png)
 
@@ -102,4 +102,15 @@ https://console.cloud.google.com/sql/instances?authuser=2&inv=1&invt=Ab4xXw&proj
 1. Follow the repo's documentation
 2. Developingggg
 3. Push to master, started deployment automatically
+
+### Get Started
+Get domain <br>
+https://console.cloud.google.com/run/detail/asia-east1/flask-api/metrics?authuser=2&inv=1&invt=Ab4xkg&project=terraform-practice-250806
+![domain.png](readme/domain.png)
+``` 
+curl --location 'https://flask-api-590276137919.asia-east1.run.app'
+```
+![postman.png](readme/postman.png)
+
+
 
