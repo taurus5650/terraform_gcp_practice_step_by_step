@@ -22,6 +22,30 @@ resource "google_artifact_registry_repository" "repo" {
   format = "DOCKER"
 }
 
+resource "google_project_service" "service_networking" {
+  # Enable service networking api
+  project = var.project_id
+  service = "servicenetworking.googleapis.com"
+}
+
+resource "google_compute_global_address" "private_ip_alloc" {
+  # Assign internal IP range to Cloud SQL
+  name          = "private-ip-allocation"
+  purpose       = "VPC_PEERING"
+  address_type  = "INTERNAL"
+  prefix_length = 16
+  network       = var.vpc_network
+}
+
+resource "google_service_networking_connection" "private_vpc_connection" {
+  # Create VPM peering connecting
+  network                 = var.vpc_network
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
+
+  depends_on = [google_project_service.service_networking]
+}
+
 resource "google_sql_database_instance" "instance" {
   # Create a Cloud SQL instance running MySQL 8.0 in the specified region
   name = "flask-db-instance"
