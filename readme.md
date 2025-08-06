@@ -18,6 +18,9 @@ https://console.cloud.google.com/apis/library?authuser=2&hl=en-GB&inv=1&invt=Ab4
 - Service Usage API
 ![service-usage-api-enable.png](readme/service-usage-api-enable.png)
 
+- Cloud Resource Manager API
+![cloud-resource-manage-api-enable.png](readme/cloud-resource-manage-api-enable.png)
+
 ### Local Terminal - Enable Google API
 Prepare `deployment/terraform/enable.tf` <br>
 Execute command
