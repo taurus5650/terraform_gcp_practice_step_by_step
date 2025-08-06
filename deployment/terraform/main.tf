@@ -63,7 +63,7 @@ resource "google_project_iam_member" "cloudsql_client_binding" {
   # Grant the SQL permmision to Cloud Run
   project = var.project_id
   role    = "roles/cloudsql.client"
-  member  = "serviceAccount:${google_service_account.cloud_run_sa.email}"
+  member  = "serviceAccount:${data.google_service_account.cloud_run_sa.email}"
 }
 
 resource "google_sql_database_instance" "instance" {
@@ -97,10 +97,9 @@ resource "google_sql_user" "user" {
 }
 
 
-resource "google_service_account" "cloud_run_sa" {
+data "google_service_account" "cloud_run_sa" {
   # Create a service account for Cloud Run
   account_id   = "cloud-run-service-account"
-  display_name = "Cloud Run Service Account"
 }
 
 resource "google_cloud_run_service" "flask_service" {
@@ -116,18 +115,13 @@ resource "google_cloud_run_service" "flask_service" {
     }
 
     spec {
-      service_account_name = google_service_account.cloud_run_sa.email
+      service_account_name = data.google_service_account.cloud_run_sa.email
 
       containers {
         image = var.image_url
 
         ports {
           container_port = 5000
-        }
-
-        env {
-          name  = "PORT"
-          value = "5000"
         }
 
         env {
