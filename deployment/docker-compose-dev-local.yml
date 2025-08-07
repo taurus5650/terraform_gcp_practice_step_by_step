@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   terraform-gcp-practice-app:
     build:
@@ -6,11 +7,8 @@ services:
       dockerfile: deployment/Dockerfile
     ports:
       - "5000:5000"
+    env_file: .env
     environment:
-      - DB_HOST=cloudsql-proxy
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
       - FLASK_DEBUG=true
       - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-creds.json
     volumes:
@@ -18,7 +16,7 @@ services:
       - ../gcp-creds.json:/secrets/gcp-creds.json:ro
     depends_on:
       cloudsql-proxy:
-          condition: service_healthy
+        condition: service_healthy
     networks:
       - mynetwork
 
@@ -31,8 +29,8 @@ services:
       - "-credential_file=/config/key.json"
     volumes:
       - ../gcp-creds.json:/config/key.json:ro
-#    ports:
-#      - "3306:3306"
+    ports:
+      - "3306:3306"
     networks:
       - mynetwork
     healthcheck:
