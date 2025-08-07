@@ -29,8 +29,7 @@ if USE_CONNECTOR:
             "pymysql",
             user=DB_USER,
             password=DB_PASSWORD,
-            db=DB_NAME,
-            port=3360
+            db=DB_NAME
         )
 
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'
