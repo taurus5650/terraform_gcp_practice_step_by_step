@@ -11,7 +11,6 @@ def init_db():
     url = f"mysql+pymysql://{db_user}:{db_pass}@{db_host}/{db_name}"
     engine = create_engine(url)
 
-    # 建表
     db.Model.metadata.create_all(engine)
 
     with engine.connect() as conn:

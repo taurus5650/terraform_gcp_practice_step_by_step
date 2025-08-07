@@ -80,7 +80,7 @@ resource "google_sql_database_instance" "instance" {
       private_network = google_compute_network.vpc_network.id
 
       authorized_networks {
-        name  = "allow-all"
+        name  = "dev"
         value = "0.0.0.0/0"  # ⚠️ dev only, production must notice
       }
     }

@@ -7,8 +7,13 @@ services:
       dockerfile: deployment/Dockerfile
     ports:
       - "5000:5000"
-    env_file: .env
+    env_file: ../deployment/.env
     environment:
+      - USE_CONNECTOR=false
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=flask_db
+      - DB_HOST=cloudsql-proxy
       - FLASK_DEBUG=true
       - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-creds.json
     volumes:
