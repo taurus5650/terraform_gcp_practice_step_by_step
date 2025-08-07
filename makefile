@@ -95,7 +95,6 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 		projects/$(GCP_PROJECT_ID)/global/networks/main-vpc || true
 
 run-terraform-apply:
-	export GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) && \
 	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars\
 	$(if $(LOCK),-lock=$(LOCK))
 
