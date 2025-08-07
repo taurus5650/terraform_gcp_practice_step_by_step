@@ -11,17 +11,17 @@ https://console.cloud.google.com/welcome/new?authuser=1&pli=1&inv=1&invt=Ab4uGA
 ![new-project.png](readme/new-project.png)
 ![project-name.png](readme/project-name.png)
 
-### Local Terminal - Install GCP sdk
+### Local Terminal - Install GCP related
 
 ``` commandline
 $ brew install --cask google-cloud-sdk
+$ brew install cloud-sql-proxy
 ```
 ### Local Terminal - Install Terraform
 ```commandline
 $ brew tap hashicorp/tap
 $ brew install hashicorp/tap/terraform
 ```
-
 
 ### Local Terminal - Setup GCP account token
 

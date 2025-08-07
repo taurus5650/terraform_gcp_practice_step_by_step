@@ -15,10 +15,10 @@ services:
       - DB_NAME=flask_db
       - DB_HOST=cloudsql-proxy
       - FLASK_DEBUG=true
-      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-creds.json
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/terraform-ci.json
     volumes:
       - ../:/terraform-gcp-practice-app
-      - ../gcp-creds.json:/secrets/gcp-creds.json:ro
+      - ../terraform-ci.json:/secrets/terraform-ci.json:ro
     depends_on:
       cloudsql-proxy:
         condition: service_healthy
@@ -33,7 +33,7 @@ services:
       - "-instances=terraform-practice-250806:asia-east1:flask-db-instance=tcp:0.0.0.0:3306"
       - "-credential_file=/config/key.json"
     volumes:
-      - ../gcp-creds.json:/config/key.json:ro
+      - ../terraform-ci.json:/config/key.json:ro
     ports:
       - "3306:3306"
     networks:

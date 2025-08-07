@@ -15,7 +15,7 @@ IMAGE_NAME := terraform-practice-image
 IMAGE_TAG := latest
 IMAGE_URI := $(ASIA_PKG)/$(GCP_PROJECT_ID)/$(TF_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
-GCP_CREDENTIALS := $(realpath gcp-creds.json)
+GCP_CREDENTIALS := $(realpath terraform-ci.json)
 export-google-cred-json:
 	export GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS)
 
