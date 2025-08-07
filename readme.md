@@ -16,6 +16,12 @@ https://console.cloud.google.com/welcome/new?authuser=1&pli=1&inv=1&invt=Ab4uGA
 ``` commandline
 $ brew install --cask google-cloud-sdk
 ```
+### Local Terminal - Install Terraform
+```commandline
+$ brew tap hashicorp/tap
+$ brew install hashicorp/tap/terraform
+```
+
 
 ### Local Terminal - Setup GCP account token
 
@@ -90,8 +96,6 @@ $ make run-terraform-first-time-enable-tf
 
 Check the service <br>
 https://console.cloud.google.com/apis/library?authuser=2&hl=en-GB&inv=1&invt=Ab4w3g&project=terraform-practice-250806
-![enable-google-api.png](readme/enable-google-api.png)
-
 
 ### Google Cloud - Edit DB to public IP
 Which for develop in LOCAL <br>

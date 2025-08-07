@@ -68,9 +68,10 @@ resource "google_project_iam_member" "cloudsql_client_binding" {
 
 resource "google_sql_database_instance" "instance" {
   # Create a Cloud SQL instance running MySQL 8.0 in the specified region
-  name = "flask-db-instance"
-  database_version = "MYSQL_8_0"
-  region = var.region
+  name              = "flask-db-instance"
+  database_version  = "MYSQL_8_0"
+  region            = var.region
+  project           = var.project_id
 
   settings {
     tier = "db-f1-micro"
@@ -92,8 +93,9 @@ resource "google_sql_database" "flask_db" {
 resource "google_sql_user" "user" {
   # Create a database USER to connect to Cloud SQL
   name = var.db_user
-  instance = google_sql_database_instance.instance.name
   password = var.db_password
+  instance = google_sql_database_instance.instance.name
+  project  = var.project_id
 }
 
 

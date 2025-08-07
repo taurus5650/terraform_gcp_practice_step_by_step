@@ -7,7 +7,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - DB_HOST=${DB_HOST}
+      - DB_HOST=cloudsql-proxy
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
@@ -17,23 +17,29 @@ services:
       - ../:/terraform-gcp-practice-app
       - ../gcp-creds.json:/secrets/gcp-creds.json:ro
     depends_on:
-      - cloudsql-proxy
+      cloudsql-proxy:
+          condition: service_healthy
     networks:
       - mynetwork
 
   cloudsql-proxy:
-    image: gcr.io/cloudsql-docker/gce-proxy:1.33.6
+    image: gcr.io/cloudsql-docker/gce-proxy:1.33.6-buster
     command:
       - "/cloud_sql_proxy"
-      - "-ip_address_types=PUBLIC"
+      - "-ip_address_types=PRIVATE"
       - "-instances=terraform-practice-250806:asia-east1:flask-db-instance=tcp:0.0.0.0:3306"
       - "-credential_file=/config/key.json"
     volumes:
       - ../gcp-creds.json:/config/key.json:ro
-    ports:
-      - "3306:3306"
+#    ports:
+#      - "3306:3306"
     networks:
       - mynetwork
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 6<>/dev/tcp/localhost/3306"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
 
 networks:
   mynetwork:

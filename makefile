@@ -15,19 +15,15 @@ IMAGE_NAME := terraform-practice-image
 IMAGE_TAG := latest
 IMAGE_URI := $(ASIA_PKG)/$(GCP_PROJECT_ID)/$(TF_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
+GCP_CREDENTIALS := $(realpath gcp-creds.json)
+export-google-cred-json:
+	export GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS)
+
 run-dev-docker:
 	docker compose -f $(DEPLOYMENT)$(DOCKER_DEV) down
 	docker image prune -f
 	docker compose -f $(DEPLOYMENT)$(DOCKER_DEV) up --build
 	docker ps
-
-run-docker-push-to-artifact-registry:
-	gcloud auth configure-docker $(ASIA_PKG)
-	docker build --platform=linux/amd64 -f $(DEPLOYMENT)$(DOCKER_FILE) -t $(IMAGE_URI) .
-	docker push $(IMAGE_URI)
-
-print-image-uri:
-	@echo "Image URI: $(IMAGE_URI)"
 
 run-terraform-first-time-enable-tf:
 	cd $(TF_DIR) && terraform init && terraform apply -auto-approve \
@@ -36,6 +32,9 @@ run-terraform-first-time-enable-tf:
 	-target=google_project_service.sqladmin \
 	-target=google_project_service.compute \
 	-target=google_project_service.servicenetworking
+
+print-image-uri:
+	@echo "Image URI: $(IMAGE_URI)"
 
 run-terraform-init:
 	cd $(TF_DIR) && terraform init
@@ -48,6 +47,11 @@ run-terraform-fmt:
 
 run-terraform-plan:
 	cd $(TF_DIR) && terraform plan
+
+run-docker-push-to-artifact-registry:
+	gcloud auth configure-docker $(ASIA_PKG)
+	docker build --platform=linux/amd64 -f $(DEPLOYMENT)$(DOCKER_FILE) -t $(IMAGE_URI) .
+	docker push $(IMAGE_URI)
 
 run-terraform-import-all: # Telling GCP that Terraform will handle these GCP resources ; Accept error and keep running github action
 	# Artifact Registry
@@ -91,9 +95,38 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 		projects/$(GCP_PROJECT_ID)/global/networks/main-vpc || true
 
 run-terraform-apply:
-	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars
+	export GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) && \
+	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars\
+	$(if $(LOCK),-lock=$(LOCK))
 
 run-terraform-destroy:
 	@echo "⚠️ Are you sure you want to destroy everything? Press Ctrl+C to cancel."
 	sleep 10
 	cd $(TF_DIR) && terraform destroy -auto-approve
+
+run-terraform-import-backup:
+	cd $(TF_DIR) && \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
+		google_artifact_registry_repository.repo \
+		projects/terraform-practice-250806/locations/asia-east1/repositories/terraform-practice-repo || true && \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
+		google_compute_global_address.private_ip_alloc \
+		projects/terraform-practice-250806/global/addresses/private-ip-allocation || true && \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
+		google_sql_database_instance.instance \
+		projects/terraform-practice-250806/instances/flask-db-instance || true && \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
+		google_sql_database.flask_db \
+		projects/terraform-practice-250806/instances/flask-db-instance/databases/flask_db || true && \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
+		google_sql_user.user \
+		terraform-practice-250806/flask-db-instance/%/flask || true && \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
+		google_cloud_run_service.flask_service \
+		asia-east1/flask-api || true && \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
+		google_cloud_run_service_iam_member.public \
+		"projects/terraform-practice-250806/locations/asia-east1/services/flask-api roles/run.invoker allUsers" || true && \
+	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
+		google_compute_network.vpc_network \
+		projects/terraform-practice-250806/global/networks/main-vpc || true
