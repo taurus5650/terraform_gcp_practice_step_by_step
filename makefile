@@ -15,8 +15,8 @@ IMAGE_NAME := terraform-practice-image
 IMAGE_TAG := latest
 IMAGE_URI := $(ASIA_PKG)/$(GCP_PROJECT_ID)/$(TF_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
-PRIVATE_IP_RANGE_NAME := google-managed-services-$(NETWORK_NAME)
 NETWORK_NAME := main-vpc-safer
+PRIVATE_IP_RANGE_NAME = google-managed-services-$(NETWORK_NAME)
 
 GCP_CREDENTIALS := $(realpath terraform-ci.json)
 export-google-cred-json:
@@ -88,6 +88,9 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 	cd $(TF_DIR) && terraform import \
 		'module.mysql.module.safer_mysql.google_sql_database_instance.default' \
 		'projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)' || true
+	cd $(TF_DIR) && terraform import \
+	  'module.mysql.module.safer_mysql.google_sql_database.default[0]' \
+	  projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)/databases/default
 
 	# Cloud SQL Database
 	cd $(TF_DIR) && terraform import \
