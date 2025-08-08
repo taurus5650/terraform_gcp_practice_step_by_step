@@ -3,46 +3,78 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-# Load env vars
-USE_CONNECTOR = os.getenv('USE_CONNECTOR', 'false').lower() == 'true'
-DB_USER = os.getenv('DB_USER', 'terraform_project')
-DB_PASSWORD = os.getenv('DB_PASSWORD', 'supersecretpassword')
-DB_NAME = os.getenv('DB_NAME', 'terraformprojectdatabase')
+# Common envs
+DB_USER = os.getenv("DB_USER", "terraform_project")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "supersecretpassword")
+DB_NAME = os.getenv("DB_NAME", "terraformprojectdatabase")
 
-# Default fallback
-SQLALCHEMY_DATABASE_URI = ''
-SQLALCHEMY_ENGINE_OPTIONS = {}
+POOL_SIZE = int(os.getenv("DB_POOL_SIZE", "5"))
+MAX_OVERFLOW = int(os.getenv("DB_MAX_OVERFLOW", "2"))
+POOL_TIMEOUT = int(os.getenv("DB_POOL_TIMEOUT", "30"))  # seconds
+POOL_RECYCLE = int(os.getenv("DB_POOL_RECYCLE", "1800"))  # seconds
 
-if USE_CONNECTOR:
-    print('🟢 Using Cloud SQL Python Connector')
-    from google.cloud.sql.connector import Connector
-    connector = Connector()
+# Fallbacks
+SQLALCHEMY_DATABASE_URI = ""
+SQLALCHEMY_ENGINE_OPTIONS = {
+    "pool_size": POOL_SIZE,
+    "max_overflow": MAX_OVERFLOW,
+    "pool_timeout": POOL_TIMEOUT,
+    "pool_recycle": POOL_RECYCLE,
+}
 
-    INSTANCE_CONNECTION_NAME = os.getenv(
-        'INSTANCE_CONNECTION_NAME',
-        'terraform-practice-250806:asia-east1:flask-db-instance'
-    )
-
-    def getconn():
-        return connector.connect(
-            INSTANCE_CONNECTION_NAME,
-            "pymysql",
-            user=DB_USER,
-            password=DB_PASSWORD,
-            db=DB_NAME
-        )
-
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'
-    SQLALCHEMY_ENGINE_OPTIONS = {"creator": getconn}
+# ----- Priority 1: explicit URI (best for Cloud Run) -----
+explicit_uri = os.getenv("SQLALCHEMY_DATABASE_URI")
+if explicit_uri:
+    mode = "URI"
+    SQLALCHEMY_DATABASE_URI = explicit_uri
 
 else:
-    print('🟡 Using Cloud SQL Proxy')
-    DB_HOST = os.getenv('DB_HOST', '127.0.0.1')
-    DB_PORT = os.getenv('DB_PORT', '3306')
-    SQLALCHEMY_DATABASE_URI = (
-        f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    )
-    SQLALCHEMY_ENGINE_OPTIONS = {}
+    # ----- Priority 2: Python Connector (opt-in) -----
+    USE_CONNECTOR = os.getenv("USE_CONNECTOR", "false").lower() == "true"
+    if USE_CONNECTOR:
+        mode = "CONNECTOR"
+        print("🟢 Using Cloud SQL Python Connector")
 
-print(f'[DEBUG] USE_CONNECTOR: {USE_CONNECTOR}')
-print(f'[DEBUG] SQLALCHEMY_DATABASE_URI: {SQLALCHEMY_DATABASE_URI}')
+        from google.cloud.sql.connector import Connector, IPTypes
+        connector = Connector()  # 可用 app teardown 關掉
+
+        INSTANCE_CONNECTION_NAME = os.getenv(
+            "INSTANCE_CONNECTION_NAME",
+            "terraform-practice-250806:asia-east1:terraformprojectinstancedb",
+        )
+        # 如果你要走 Private IP，可以改成：ip_type=IPTypes.PRIVATE
+        def getconn():
+            return connector.connect(
+                INSTANCE_CONNECTION_NAME,
+                "pymysql",
+                user=DB_USER,
+                password=DB_PASSWORD,
+                db=DB_NAME,
+                ip_type=IPTypes.PUBLIC,
+            )
+
+        SQLALCHEMY_DATABASE_URI = "mysql+pymysql://"
+        SQLALCHEMY_ENGINE_OPTIONS.update({"creator": getconn})
+
+    else:
+        # ----- Priority 3: Unix socket（Cloud Run） -----
+        DB_HOST = os.getenv("DB_HOST", "")
+        if DB_HOST.startswith("/cloudsql/"):
+            mode = "UNIX_SOCKET"
+            print("🟢 Using Cloud SQL Unix socket")
+            SQLALCHEMY_DATABASE_URI = (
+                f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}"
+                f"?unix_socket={DB_HOST}"
+            )
+        else:
+            # ----- Priority 4: TCP（dev/proxy） -----
+            mode = "TCP"
+            print("🟡 Using TCP / Cloud SQL Proxy")
+            DB_HOST = DB_HOST or os.getenv("DB_HOST", "127.0.0.1")
+            DB_PORT = os.getenv("DB_PORT", "3306")
+            SQLALCHEMY_DATABASE_URI = (
+                f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+            )
+
+print(f"[DEBUG] DB Mode: {mode}")
+print(f"[DEBUG] SQLALCHEMY_DATABASE_URI: {SQLALCHEMY_DATABASE_URI}")
