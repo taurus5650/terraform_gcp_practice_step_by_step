@@ -68,6 +68,10 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 		'module.network.module.vpc.google_compute_network.network' \
 		'projects/$(GCP_PROJECT_ID)/global/networks/$(NETWORK_NAME)' || true
 
+	# Compute
+	cd $(TF_DIR) && terraform import \
+		google_compute_global_address.google-managed-services-range projects/$(GCP_PROJECT_ID)/global/addresses/google-managed-services-$(SQL_INSTANCE_NAME)
+
 	# Private Service Access
 	cd $(TF_DIR) && terraform import \
 		'module.private_service_access.google_compute_global_address.private_ip_address' \
