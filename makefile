@@ -7,13 +7,16 @@ TF_DIR := $(DEPLOYMENT)/terraform
 TF_REPO := terraform-practice-repo
 ASIA_PKG := asia-east1-docker.pkg.dev
 
-SQL_INSTANCE_NAME := flask-db-instance
-DB_NAME := flask_db
-DB_USER := flask
+SQL_INSTANCE_NAME := terraformprojectinstancedb
+DB_NAME := terraform_project_database
+DB_USER := terraform_project
 
 IMAGE_NAME := terraform-practice-image
 IMAGE_TAG := latest
 IMAGE_URI := $(ASIA_PKG)/$(GCP_PROJECT_ID)/$(TF_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
+
+PRIVATE_IP_RANGE_NAME := private-ip-allocation
+NETWORK_NAME := main-vpc-safer
 
 GCP_CREDENTIALS := $(realpath terraform-ci.json)
 export-google-cred-json:
@@ -31,7 +34,8 @@ run-terraform-first-time-enable-tf:
 	-target=google_project_service.cloud_run \
 	-target=google_project_service.sqladmin \
 	-target=google_project_service.compute \
-	-target=google_project_service.servicenetworking
+	-target=google_project_service.servicenetworking \
+	-target=google_project_service.enable_sql
 
 print-image-uri:
 	@echo "Image URI: $(IMAGE_URI)"
@@ -59,19 +63,24 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 		google_artifact_registry_repository.repo \
 		projects/$(GCP_PROJECT_ID)/locations/asia-east1/repositories/$(TF_REPO) || true
 
-	# Private IP Allocation
+	# VPC Network
 	cd $(TF_DIR) && terraform import \
-		google_compute_global_address.private_ip_alloc \
-		projects/$(GCP_PROJECT_ID)/global/addresses/private-ip-allocation || true
+		'module.network.module.vpc.google_compute_network.network' \
+		'projects/$(GCP_PROJECT_ID)/global/networks/$(NETWORK_NAME)' || true
+
+	# Private Service Access
+	cd $(TF_DIR) && terraform import \
+		'module.private_service_access.google_compute_global_address.private_ip_address' \
+		'projects/$(GCP_PROJECT_ID)/global/addresses/$(PRIVATE_IP_RANGE_NAME)' || true
 
 	# Cloud SQL Instance
 	cd $(TF_DIR) && terraform import \
-		google_sql_database_instance.instance \
-		projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME) || true
+		'module.mysql.module.safer_mysql.google_sql_database_instance.default' \
+		'projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)' || true
 
 	# Cloud SQL Database
 	cd $(TF_DIR) && terraform import \
-		google_sql_database.flask_db \
+		google_sql_database.terraformprojectdatabase \
 		projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)/databases/$(DB_NAME) || true
 
 	# Cloud SQL User
@@ -81,51 +90,20 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 
 	# Cloud Run Service
 	cd $(TF_DIR) && terraform import \
-		google_cloud_run_service.flask_service \
-		asia-east1/flask-api || true
+		google_cloud_run_service.terraform_project_service \
+		asia-east1/terraform-project-api || true
 
 	# Cloud Run IAM Public Access
 	cd $(TF_DIR) && terraform import \
 		google_cloud_run_service_iam_member.public \
-		"projects/$(GCP_PROJECT_ID)/locations/asia-east1/services/flask-api roles/run.invoker allUsers" || true
-
-	# VPC Network
-	cd $(TF_DIR) && terraform import \
-		google_compute_network.vpc_network \
-		projects/$(GCP_PROJECT_ID)/global/networks/main-vpc || true
+		"projects/$(GCP_PROJECT_ID)/locations/asia-east1/services/terraform-project-api roles/run.invoker allUsers" || true
 
 run-terraform-apply:
 	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars\
 	$(if $(LOCK),-lock=$(LOCK))
 
 run-terraform-destroy:
-	@echo "⚠️ Are you sure you want to destroy everything? Press Ctrl+C to cancel."
+	@echo "⚠️ Are you sure you want to destroy everything ? "
+	@echo "⚠️ Press Ctrl+C to cancel."
 	sleep 10
 	cd $(TF_DIR) && terraform destroy -auto-approve
-
-run-terraform-import-backup:
-	cd $(TF_DIR) && \
-	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
-		google_artifact_registry_repository.repo \
-		projects/terraform-practice-250806/locations/asia-east1/repositories/terraform-practice-repo || true && \
-	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
-		google_compute_global_address.private_ip_alloc \
-		projects/terraform-practice-250806/global/addresses/private-ip-allocation || true && \
-	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
-		google_sql_database_instance.instance \
-		projects/terraform-practice-250806/instances/flask-db-instance || true && \
-	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
-		google_sql_database.flask_db \
-		projects/terraform-practice-250806/instances/flask-db-instance/databases/flask_db || true && \
-	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
-		google_sql_user.user \
-		terraform-practice-250806/flask-db-instance/%/flask || true && \
-	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
-		google_cloud_run_service.flask_service \
-		asia-east1/flask-api || true && \
-	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
-		google_cloud_run_service_iam_member.public \
-		"projects/terraform-practice-250806/locations/asia-east1/services/flask-api roles/run.invoker allUsers" || true && \
-	GOOGLE_APPLICATION_CREDENTIALS=$(GCP_CREDENTIALS) terraform import \
-		google_compute_network.vpc_network \
-		projects/terraform-practice-250806/global/networks/main-vpc || true

@@ -7,7 +7,7 @@ db = SQLAlchemy()
 USE_CONNECTOR = os.getenv('USE_CONNECTOR', 'false').lower() == 'true'
 DB_USER = os.getenv('DB_USER', 'root')
 DB_PASSWORD = os.getenv('DB_PASSWORD', 'password')
-DB_NAME = os.getenv('DB_NAME', 'flask_db')
+DB_NAME = os.getenv('DB_NAME', 'terraformprojectdatabase')
 
 # Default fallback
 SQLALCHEMY_DATABASE_URI = ''

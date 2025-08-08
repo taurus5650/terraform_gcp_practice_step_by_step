@@ -2,17 +2,76 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "6.13.0"
+      version = ">= 6.31.0, < 7.0.0"
     }
     google-beta = {
       source  = "hashicorp/google-beta"
-      version = "6.13.0"
+      version = ">= 6.31.0, < 7.0.0"
     }
   }
 }
+
 provider "google" {
   project = var.project_id
-  region = var.region
+  region  = var.region
+}
+
+provider "google-beta" {
+  project = var.project_id
+  region  = var.region
+}
+
+module "network" {
+  # 1. Build safer VPC（network module）
+  source       = "terraform-google-modules/network/google"
+  version      = "~> 11.0"
+  project_id   = var.project_id
+  network_name = "${var.network_name}-safer"
+  subnets      = []
+}
+
+module "private_service_access" {
+  # 2. Build Private Service Access（for Cloud SQL private IP）
+  source  = "terraform-google-modules/sql-db/google//modules/private_service_access"
+  version = "~> 26.0"
+
+  project_id      = var.project_id
+  vpc_network     = module.network.network_name
+  deletion_policy = "ABANDON"
+
+  depends_on = [module.network] # ✅ 加這行
+}
+
+module "mysql" {
+  #3. Build Cloud SQL Instance
+  source               = "terraform-google-modules/sql-db/google//modules/safer_mysql"
+  version              = "~> 26.0"
+  name                 = var.db_instance_name
+  random_instance_name = false
+  project_id           = var.project_id
+  region               = var.region
+  zone                 = var.zone
+  tier                 = "db-f1-micro"
+  database_version     = "MYSQL_8_0"
+  deletion_protection  = false
+  vpc_network          = module.network.network_self_link
+  allocated_ip_range   = module.private_service_access.google_compute_global_address_name
+  module_depends_on    = [module.private_service_access.peering_completed]
+
+  additional_users = [
+    {
+      name            = var.db_user
+      password        = var.db_password
+      host            = "%"
+      type            = "BUILT_IN"
+      random_password = false
+    }
+  ]
+}
+
+data "google_service_account" "cloud_run_sa" {
+  # Data: service account email
+  account_id = "cloud-run-service-account"
 }
 
 resource "google_artifact_registry_repository" "repo" {
@@ -22,103 +81,36 @@ resource "google_artifact_registry_repository" "repo" {
   format = "DOCKER"
 }
 
-resource "google_project_service" "service_networking" {
-  # Enable service networking api
-  project = var.project_id
-  service = "servicenetworking.googleapis.com"
-}
-
-resource "google_compute_network" "vpc_network" {
-  name                    = "main-vpc"
-  auto_create_subnetworks = true
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-resource "google_compute_global_address" "private_ip_alloc" {
-  # Assign internal IP range to Cloud SQL
-  name          = "private-ip-allocation"
-  purpose       = "VPC_PEERING"
-  address_type  = "INTERNAL"
-  prefix_length = 16
-  network       = google_compute_network.vpc_network.id
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-resource "google_service_networking_connection" "private_vpc_connection" {
-  # Create VPM peering connecting
-  network                 = google_compute_network.vpc_network.id
-  service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
-  depends_on = [
-    google_compute_global_address.private_ip_alloc,
-    google_project_service.service_networking
-  ]
-}
+# resource "google_project_iam_member" "sa_cloudsql_access" {
+#   project = var.project_id
+#   role    = "roles/cloudsql.admin"
+#   member  = "serviceAccount:${data.google_service_account.cloud_run_sa.email}"
+# }
 
 resource "google_project_iam_member" "cloudsql_client_binding" {
-  # Grant the SQL permmision to Cloud Run
+  # Cloud SQL client permission
   project = var.project_id
   role    = "roles/cloudsql.client"
   member  = "serviceAccount:${data.google_service_account.cloud_run_sa.email}"
 }
 
-resource "google_sql_database_instance" "instance" {
-  # Create a Cloud SQL instance running MySQL 8.0 in the specified region
-  name              = "flask-db-instance"
-  database_version  = "MYSQL_8_0"
-  region            = var.region
-  project           = var.project_id
-
-  settings {
-    tier = "db-f1-micro"
-    ip_configuration {
-      ipv4_enabled    = true
-      private_network = google_compute_network.vpc_network.id
-
-      authorized_networks {
-        name  = "dev"
-        value = "0.0.0.0/0"  # ⚠️ dev only, production must notice
-      }
-    }
-  }
-
-  depends_on = [google_service_networking_connection.private_vpc_connection]
-}
-
-resource "google_sql_database" "flask_db" {
+resource "google_sql_database" "terraform_project_database" {
   # Create a database inside the Cloud SQL
   name     = var.db_name
-  instance = google_sql_database_instance.instance.name
+  instance = module.mysql.instance_name
 }
 
-resource "google_sql_user" "user" {
-  # Create a database USER to connect to Cloud SQL
-  name = var.db_user
-  password = var.db_password
-  instance = google_sql_database_instance.instance.name
-  project  = var.project_id
-}
-
-
-data "google_service_account" "cloud_run_sa" {
-  # Create a service account for Cloud Run
-  account_id   = "cloud-run-service-account"
-}
-
-resource "google_cloud_run_service" "flask_service" {
-  # Deploy docker image to Cloud Run
-  name     = "flask-api"
+resource "google_cloud_run_service" "terraform_project_service" {
+  # Do Cloud Run
+  name     = "terraform-project-api"
   location = var.region
 
   template {
     metadata {
       annotations = {
-        "run.googleapis.com/cloudsql-instances" = google_sql_database_instance.instance.connection_name
-        "force-redeploy" = timestamp()
+        "run.googleapis.com/cloudsql-instances" = module.mysql.instance_connection_name
+        # "run.googleapis.com/cloudsql-instances" = "${var.project_id}:${var.region}:${module.mysql.instance_name}"
+        "force-redeploy"                        = timestamp()
       }
     }
 
@@ -146,14 +138,9 @@ resource "google_cloud_run_service" "flask_service" {
         }
         env {
           name  = "DB_HOST"
-          value = "/cloudsql/${google_sql_database_instance.instance.connection_name}"
+          value = "/cloudsql/${module.mysql.instance_connection_name}"
+          # value = "/cloudsql/${var.project_id}:${var.region}:${module.mysql.instance_name}"
         }
-
-        env {
-          name  = "INSTANCE_CONNECTION_NAME"
-          value = google_sql_database_instance.instance.connection_name
-        }
-
       }
     }
   }
@@ -167,8 +154,8 @@ resource "google_cloud_run_service" "flask_service" {
 }
 
 resource "google_cloud_run_service_iam_member" "public" {
-  service = google_cloud_run_service.flask_service.name
+  service  = google_cloud_run_service.terraform_project_service.name
   location = var.region
-  role    = "roles/run.invoker"
-  member  = "allUsers"
+  role     = "roles/run.invoker"
+  member   = "allUsers"
 }

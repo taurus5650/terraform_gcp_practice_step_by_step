@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_ENGINE_OPTIONS
 from models import db, Order
 import os
@@ -13,14 +13,23 @@ db.init_app(app)
 def hello():
     return jsonify(message="Flask + Cloud SQL OK")
 
-@app.route("/order")
+@app.route("/order", methods=["GET"])
 def order():
     orders = Order.query.all()
     return jsonify([{'id': o.id, 'name': o.name} for o in orders])
 
+@app.route("/order", methods=["POST"])
+def create_order():
+    data = request.get_json()
+    new_order = Order(name=data['name'])
+    db.session.add(new_order)
+    db.session.commit()
+    return jsonify(id=new_order.id, name=new_order.name), 201
+
 if __name__ == "__main__":
     with app.app_context():
         try:
+            # Manually create the tables if they don't exist
             db.create_all()
             print("DB Created")
         except Exception as e:

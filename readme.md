@@ -97,7 +97,7 @@ $ make run-terraform-first-time-enable-tf
 Check the service <br>
 https://console.cloud.google.com/apis/library?authuser=2&hl=en-GB&inv=1&invt=Ab4w3g&project=terraform-practice-250806
 
-### Google Cloud - Edit DB to public IP
+### Google Cloud - Edit DB to public IP (If needed)
 Which for develop in LOCAL <br>
 https://console.cloud.google.com/sql/instances?authuser=2&inv=1&invt=Ab4xXw&project=terraform-practice-250806
 ![db-public-ip-first-time.png](readme/db-public-ip-first-time.png)

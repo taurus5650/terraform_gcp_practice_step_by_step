@@ -1,7 +1,7 @@
 output "cloud_run_url" {
-  value = google_cloud_run_service.flask_service.status[0].url
+  value = google_cloud_run_service.terraform_project_service.status[0].url
 }
 
-output "cloud_sql_connection_name" {
-  value = google_sql_database_instance.instance.connection_name
+output "cloud_sql_instance_name" {
+  value = module.mysql.instance_name
 }
