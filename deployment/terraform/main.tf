@@ -47,7 +47,6 @@ module "mysql" {
   source                    = "terraform-google-modules/sql-db/google//modules/safer_mysql"
   version                   = "~> 26.0"
   name                      = var.db_instance_name
-  create_default_database   = false
   random_instance_name      = false
   project_id                = var.project_id
   region                    = var.region
