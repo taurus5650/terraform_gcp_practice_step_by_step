@@ -134,3 +134,12 @@ run-local-db-to-public:
 	gcloud run services describe terraform-project-api \
 	  --region=asia-east1 \
 	  --format='yaml(spec.template.metadata.annotations,spec.template.spec.containers[0].env,spec.template.spec.serviceAccount)'
+
+check-gcp-log:
+	 gcloud logging read \
+	  'resource.type="cloud_run_revision" \
+	   AND resource.labels.service_name="$(TF_SERVICE_NAME)" \
+	   AND resource.labels.location="asia-east1"' \
+	  --project=$(GCP_PROJECT_ID) \
+	  --limit=1000 \
+	  --format="value(textPayload)"
