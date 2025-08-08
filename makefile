@@ -92,10 +92,15 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 	  'module.mysql.module.safer_mysql.google_sql_database.default[0]' \
 	  projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)/databases/default
 
-	# Cloud SQL Database
+	# Cloud SQL Database (handwritten)
 	cd $(TF_DIR) && terraform import \
 	  google_sql_database.terraform_project_database \
 	  projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)/databases/$(DB_NAME) || true
+
+  	# Cloud SQL Database from module (default)
+	cd $(TF_DIR) && terraform import \
+	  'module.mysql.module.safer_mysql.google_sql_database.default[0]' \
+	  projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)/databases/default || true
 
 	# Cloud SQL User
 	cd $(TF_DIR) && terraform import \
