@@ -50,7 +50,7 @@ run-terraform-fmt:
 	cd $(TF_DIR) && terraform fmt -recursive
 
 run-terraform-plan:
-	cd $(TF_DIR) && terraform plan
+	cd $(TF_DIR) && terraform plan -out=tfplan
 
 run-docker-push-to-artifact-registry:
 	gcloud auth configure-docker $(ASIA_PKG)
