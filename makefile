@@ -126,3 +126,8 @@ run-terraform-destroy:
 	@echo "⚠️ Press Ctrl+C to cancel."
 	sleep 10
 	cd $(TF_DIR) && terraform destroy -auto-approve
+
+run-local-db-to-public:
+	gcloud sql instances describe terraformprojectinstancedb --format='value(connectionName)'
+	gcloud sql instances patch terraformprojectinstancedb --assign-ip
+	gcloud sql instances list
