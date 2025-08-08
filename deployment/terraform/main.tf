@@ -44,19 +44,20 @@ module "private_service_access" {
 
 module "mysql" {
   #3. Build Cloud SQL Instance
-  source               = "terraform-google-modules/sql-db/google//modules/safer_mysql"
-  version              = "~> 26.0"
-  name                 = var.db_instance_name
-  random_instance_name = false
-  project_id           = var.project_id
-  region               = var.region
-  zone                 = var.zone
-  tier                 = "db-f1-micro"
-  database_version     = "MYSQL_8_0"
-  deletion_protection  = false
-  vpc_network          = module.network.network_self_link
-  allocated_ip_range   = module.private_service_access.google_compute_global_address_name
-  module_depends_on    = [module.private_service_access.peering_completed]
+  source                    = "terraform-google-modules/sql-db/google//modules/safer_mysql"
+  version                   = "~> 26.0"
+  name                      = var.db_instance_name
+  create_default_database   = false
+  random_instance_name      = false
+  project_id                = var.project_id
+  region                    = var.region
+  zone                      = var.zone
+  tier                      = "db-f1-micro"
+  database_version          = "MYSQL_8_0"
+  deletion_protection       = false
+  vpc_network               = module.network.network_self_link
+  allocated_ip_range        = module.private_service_access.google_compute_global_address_name
+  module_depends_on         = [module.private_service_access.peering_completed]
 
   additional_users = [
     {

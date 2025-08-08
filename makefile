@@ -91,8 +91,8 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 
 	# Cloud SQL Database
 	cd $(TF_DIR) && terraform import \
-		google_sql_database.terraformprojectdatabase \
-		projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)/databases/$(DB_NAME) || true
+	  google_sql_database.terraform_project_database \
+	  projects/$(GCP_PROJECT_ID)/instances/$(SQL_INSTANCE_NAME)/databases/$(DB_NAME) || true
 
 	# Cloud SQL User
 	cd $(TF_DIR) && terraform import \
