@@ -131,3 +131,6 @@ run-local-db-to-public:
 	 gcloud sql instances describe terraformprojectinstancedb --format='value(connectionName)'
 	 gcloud sql instances patch terraformprojectinstancedb --assign-ip
 	 gcloud sql instances list
+	gcloud run services describe terraform-project-api \
+	  --region=asia-east1 \
+	  --format='yaml(spec.template.metadata.annotations,spec.template.spec.containers[0].env,spec.template.spec.serviceAccount)'
