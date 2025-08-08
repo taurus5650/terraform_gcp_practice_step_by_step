@@ -1,6 +1,7 @@
 .idea/
 .venv
 gcp-creds.json
+..gcp-creds.json
 terraform-ci.json
 __pycache__/
 *.pyc

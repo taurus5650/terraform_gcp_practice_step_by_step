@@ -10,15 +10,15 @@ services:
     env_file: ../deployment/.env
     environment:
       - USE_CONNECTOR=false
-      - DB_USER=root
-      - DB_PASSWORD=password
-      - DB_NAME=flask_db
+      - DB_USER=terraform_project
+      - DB_PASSWORD=supersecretpassword
+      - DB_NAME=terraformprojectdatabase
       - DB_HOST=cloudsql-proxy
       - FLASK_DEBUG=true
-      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/terraform-ci.json
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/key.json
     volumes:
       - ../:/terraform-gcp-practice-app
-      - ../terraform-ci.json:/secrets/terraform-ci.json:ro
+      - ../gcp-creds.json:/secrets/key.json:ro
     depends_on:
       cloudsql-proxy:
         condition: service_healthy
@@ -30,10 +30,10 @@ services:
     command:
       - "/cloud_sql_proxy"
       - "-ip_address_types=PRIVATE"
-      - "-instances=terraform-practice-250806:asia-east1:flask-db-instance=tcp:0.0.0.0:3306"
-      - "-credential_file=/config/key.json"
+      - "-instances=terraform-practice-250806:asia-east1:terraformprojectinstancedb=tcp:0.0.0.0:3306"
+      - "-credential_file=/secrets/key.json"
     volumes:
-      - ../terraform-ci.json:/config/key.json:ro
+      - ../gcp-creds.json:/secrets/key.json:ro
     ports:
       - "3306:3306"
     networks:
