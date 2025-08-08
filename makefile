@@ -70,7 +70,7 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 
 	# Compute
 	cd $(TF_DIR) && terraform import \
-		google_compute_global_address.google-managed-services-range projects/$(GCP_PROJECT_ID)/global/addresses/google-managed-services-$(SQL_INSTANCE_NAME)
+		google_compute_global_address.google-managed-services-range projects/$(GCP_PROJECT_ID)/global/addresses/google-managed-services-$(SQL_INSTANCE_NAME) || true
 
 	# Private Service Access
 	cd $(TF_DIR) && terraform import \
