@@ -8,7 +8,7 @@ TF_REPO := terraform-practice-repo
 ASIA_PKG := asia-east1-docker.pkg.dev
 
 SQL_INSTANCE_NAME := terraformprojectinstancedb
-DB_NAME := terraform_project_database
+DB_NAME := terraformprojectdatabase
 DB_USER := terraform_project
 
 IMAGE_NAME := terraform-practice-image
