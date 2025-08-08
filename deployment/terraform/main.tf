@@ -141,9 +141,17 @@ resource "google_cloud_run_service" "terraform_project_service" {
         #   value = "/cloudsql/${module.mysql.instance_connection_name}"
         #   # value = "/cloudsql/${var.project_id}:${var.region}:${module.mysql.instance_name}"
         # }
+        # env {
+        #   name  = "SQLALCHEMY_DATABASE_URI"
+        #   value = "mysql+pymysql://${var.db_user}:${var.db_password}@/${var.db_name}?unix_socket=/cloudsql/${module.mysql.instance_connection_name}"
+        # }
         env {
-          name  = "SQLALCHEMY_DATABASE_URI"
-          value = "mysql+pymysql://${var.db_user}:${var.db_password}@/${var.db_name}?unix_socket=/cloudsql/${module.mysql.instance_connection_name}"
+          name  = "USE_CONNECTOR"
+          value = "true"
+        }
+        env {
+          name  = "INSTANCE_CONNECTION_NAME"
+          value = module.mysql.instance_connection_name
         }
       }
     }
