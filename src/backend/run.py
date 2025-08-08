@@ -11,14 +11,14 @@ db.init_app(app)
 
 @app.route("/")
 def hello():
-    return jsonify(message="Flask + Cloud SQL OK")
+    return "<h1>Happy Testing :)</h1>"
 
-@app.route("/order", methods=["GET"])
+@app.route("/get_order", methods=["GET"])
 def order():
     orders = Order.query.all()
     return jsonify([{'id': o.id, 'name': o.name} for o in orders])
 
-@app.route("/order", methods=["POST"])
+@app.route("/create_order", methods=["POST"])
 def create_order():
     data = request.get_json()
     new_order = Order(name=data['name'])

@@ -15,7 +15,7 @@ IMAGE_NAME := terraform-practice-image
 IMAGE_TAG := latest
 IMAGE_URI := $(ASIA_PKG)/$(GCP_PROJECT_ID)/$(TF_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
-PRIVATE_IP_RANGE_NAME := private-ip-allocation
+PRIVATE_IP_RANGE_NAME := google-managed-services-$(NETWORK_NAME)
 NETWORK_NAME := main-vpc-safer
 
 GCP_CREDENTIALS := $(realpath terraform-ci.json)
@@ -68,15 +68,21 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 		'module.network.module.vpc.google_compute_network.network' \
 		'projects/$(GCP_PROJECT_ID)/global/networks/$(NETWORK_NAME)' || true
 
-	# Compute
+
+	# Compute (PSA Global Address)
 	cd $(TF_DIR) && terraform import \
-		google_compute_global_address.google-managed-services-range \
-		projects/$(GCP_PROJECT_ID)/global/addresses/google-managed-services-$(SQL_INSTANCE_NAME) || true
+	  'module.private_service_access.google_compute_global_address.google-managed-services-range' \
+	  'projects/$(GCP_PROJECT_ID)/global/addresses/google-managed-services-$(NETWORK_NAME)' || true
 
 	# Private Service Access
 	cd $(TF_DIR) && terraform import \
 		'module.private_service_access.google_compute_global_address.private_ip_address' \
 		'projects/$(GCP_PROJECT_ID)/global/addresses/$(PRIVATE_IP_RANGE_NAME)' || true
+
+	# Private VPC Connection
+	cd $(TF_DIR) && terraform import \
+	  'module.private_service_access.google_service_networking_connection.private_vpc_connection' \
+	  'servicenetworking.googleapis.com:projects/$(GCP_PROJECT_ID)/global/networks/$(NETWORK_NAME)' || true
 
 	# Cloud SQL Instance
 	cd $(TF_DIR) && terraform import \
