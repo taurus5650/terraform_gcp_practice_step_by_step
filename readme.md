@@ -121,7 +121,7 @@ Get domain <br>
 https://console.cloud.google.com/run/detail/asia-east1/flask-api/metrics?authuser=2&inv=1&invt=Ab4xkg&project=terraform-practice-250806
 ![domain.png](readme/domain.png)
 ``` 
-curl --location 'https://flask-api-590276137919.asia-east1.run.app'
+curl --location 'https://terraform-project-api-vpz7pcrhea-de.a.run.app/'
 ```
 ![postman.png](readme/postman.png)
 

@@ -136,10 +136,14 @@ resource "google_cloud_run_service" "terraform_project_service" {
           name  = "DB_NAME"
           value = var.db_name
         }
+        # env {
+        #   name  = "DB_HOST"
+        #   value = "/cloudsql/${module.mysql.instance_connection_name}"
+        #   # value = "/cloudsql/${var.project_id}:${var.region}:${module.mysql.instance_name}"
+        # }
         env {
-          name  = "DB_HOST"
-          value = "/cloudsql/${module.mysql.instance_connection_name}"
-          # value = "/cloudsql/${var.project_id}:${var.region}:${module.mysql.instance_name}"
+          name  = "SQLALCHEMY_DATABASE_URI"
+          value = "mysql+pymysql://${var.db_user}:${var.db_password}@/${var.db_name}?unix_socket=/cloudsql/${module.mysql.instance_connection_name}"
         }
       }
     }

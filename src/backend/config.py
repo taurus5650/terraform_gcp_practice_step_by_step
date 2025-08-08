@@ -5,8 +5,8 @@ db = SQLAlchemy()
 
 # Load env vars
 USE_CONNECTOR = os.getenv('USE_CONNECTOR', 'false').lower() == 'true'
-DB_USER = os.getenv('DB_USER', 'root')
-DB_PASSWORD = os.getenv('DB_PASSWORD', 'password')
+DB_USER = os.getenv('DB_USER', 'terraform_project')
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'supersecretpassword')
 DB_NAME = os.getenv('DB_NAME', 'terraformprojectdatabase')
 
 # Default fallback
