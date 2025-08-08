@@ -128,6 +128,6 @@ run-terraform-destroy:
 	cd $(TF_DIR) && terraform destroy -auto-approve
 
 run-local-db-to-public:
-	gcloud sql instances describe terraformprojectinstancedb --format='value(connectionName)'
-	gcloud sql instances patch terraformprojectinstancedb --assign-ip
-	gcloud sql instances list
+	 gcloud sql instances describe terraformprojectinstancedb --format='value(connectionName)'
+	 gcloud sql instances patch terraformprojectinstancedb --assign-ip
+	 gcloud sql instances list
