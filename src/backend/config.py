@@ -54,18 +54,18 @@ else:
                 ip_type=IPTypes.PUBLIC,
             )
 
-        SQLALCHEMY_DATABASE_URI = "mysql+pymysql://"
+        SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'
         SQLALCHEMY_ENGINE_OPTIONS.update({"creator": getconn})
 
     else:
         # ----- Unix socket（Cloud Run） -----
         DB_HOST = os.getenv('DB_HOST', '')
-        if DB_HOST.startswith("/cloudsql/"):
+        if DB_HOST.startswith('/cloudsql/'):
             mode = 'UNIX_SOCKET'
             print('🟢 Using Cloud SQL Unix socket')
             SQLALCHEMY_DATABASE_URI = (
-                f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}"
-                f"?unix_socket={DB_HOST}"
+                f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}'
+                f'?unix_socket={DB_HOST}'
             )
         else:
             # ----- TCP（dev/proxy） -----

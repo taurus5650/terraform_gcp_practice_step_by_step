@@ -8,7 +8,7 @@ def init_db():
     db_name = os.getenv('DB_NAME')
     db_host = os.getenv('DB_HOST')
 
-    url = f"mysql+pymysql://{db_user}:{db_pass}@{db_host}/{db_name}"
+    url = f'mysql+pymysql://{db_user}:{db_pass}@{db_host}/{db_name}'
     engine = create_engine(url)
 
     db.Model.metadata.create_all(engine)
