@@ -26,7 +26,7 @@ module "network" {
   source       = "terraform-google-modules/network/google"
   version      = "~> 11.0"
   project_id   = var.project_id
-  network_name = "${var.network_name}-safer"
+  network_name = "${var.network_name}"
   subnets      = []
 }
 
@@ -39,7 +39,7 @@ module "private_service_access" {
   vpc_network     = module.network.network_name
   deletion_policy = "ABANDON"
 
-  depends_on = [module.network] # ✅ 加這行
+  depends_on = [module.network]
 }
 
 module "mysql" {
