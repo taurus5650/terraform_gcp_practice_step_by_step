@@ -119,7 +119,6 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 
 run-terraform-apply:
 	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars\
-	$(if $(LOCK),-lock=$(LOCK))
 
 run-terraform-destroy:
 	@echo "⚠️ Are you sure you want to destroy everything ? "

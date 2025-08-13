@@ -3,25 +3,35 @@ name: ci-workflow
 on:
   push:
     branches: [master]
+    paths-ignore:
+      - 'deployment/terraform/**'
+      - '.github/workflows/00_infra.yml'
+
   pull_request:
+    paths-ignore:
+      - 'deployment/terraform/**'
+      - '.github/workflows/00_infra.yml'
+
+  workflow_run:
+    workflows: ['infra-workflow']
+    types:
+      - completed
+
+  workflow_dispatch: {}
 
 jobs:
   check:
     runs-on: ubuntu-latest
+
+    env:
+      POETRY_VIRTUALENVS_CREATE: false
+
     steps:
       - name: checkout-code
         uses: actions/checkout@v4
-      - name: setup-google-cloud-credential
-        uses: google-github-actions/auth@v2
+      - name: setup-python-for-ut
+        uses: actions/setup-python@v4
         with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-      - name: install-google-cli
-        uses: google-github-actions/setup-gcloud@v1
-      - name: install-terraform
-        uses: hashicorp/setup-terraform@v3
-      - name: terraform-init
-        run: make run-terraform-init
-      - name: terraform-fmt
-        run: make run-terraform-fmt
-      - name: terraform-validate
-        run: make run-terraform-validate
+          python-version: '3.13'
+#      - name: run-unit-test
+#        run: pytest --env=test -s -v

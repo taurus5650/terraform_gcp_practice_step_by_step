@@ -1,12 +1,10 @@
 name: cd-workflow
 
-
 on:
   workflow_run:
     workflows: ['ci-workflow']
     types:
       - completed
-
   workflow_dispatch: {}
 
 jobs:
@@ -24,17 +22,7 @@ jobs:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
       - name: install-google-cli
         uses: google-github-actions/setup-gcloud@v1
-      - name: install-terraform
-        uses: hashicorp/setup-terraform@v3
-      - name: terraform-init
-        run: make run-terraform-init
-      - name: wait-for-gcp-api-propagation
-        run: sleep 15
-      - name: terraform-import
-        run: make run-terraform-import-all
-      - name: terraform-plan
-        run: make run-terraform-plan
       - name: build-and-push-docker-image-to-artifact-registry
         run: make run-docker-push-to-artifact-registry
-      - name: terraform-apply
-        run: make run-terraform-apply
+      - name: deploy-to-cloud-run
+        run: make run-deploy-to-cloud-run
