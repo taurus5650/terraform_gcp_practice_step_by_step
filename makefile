@@ -15,7 +15,7 @@ DB_USER := terraform_project
 
 IMAGE_NAME := terraform-practice-image
 IMAGE_TAG := latest
-IMAGE_URI := $(ASIA_PKG)/$(GCP_PROJECT_ID)/$(TF_REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
+IMAGE_URI := $(ASIA_PKG)/$(GCP_PROJECT_ID)/$(REPO)/$(IMAGE_NAME):$(IMAGE_TAG)
 
 NETWORK_NAME := main-vpc-safer
 PRIVATE_IP_RANGE_NAME = google-managed-services-$(NETWORK_NAME)
