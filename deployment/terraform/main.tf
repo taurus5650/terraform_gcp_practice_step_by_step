@@ -81,7 +81,7 @@ resource "google_artifact_registry_repository" "repo" {
   format = "DOCKER"
 }
 
-resource "google_compute_global_address" "google-managed-services-range" {
+resource "google_compute_global_address" "google_managed_services_range" {
   # Keep Private IP
   name          = "google-managed-services-${var.network_name}"
   purpose       = "VPC_PEERING"
