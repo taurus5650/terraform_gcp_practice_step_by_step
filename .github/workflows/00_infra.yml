@@ -44,3 +44,4 @@ jobs:
         run: make run-docker-push-to-artifact-registry
       - name: terraform-apply
         run: make run-terraform-apply
+
