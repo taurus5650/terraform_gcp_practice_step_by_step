@@ -81,6 +81,12 @@ resource "google_artifact_registry_repository" "repo" {
   format = "DOCKER"
 }
 
+resource "google_service_networking_connection" "private_vpc_connection" {
+  network                 = "projects/${var.project_id}/global/networks/${var.network_name}"
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.google-managed-services-range.name]
+}
+
 # resource "google_project_iam_member" "sa_cloudsql_access" {
 #   project = var.project_id
 #   role    = "roles/cloudsql.admin"

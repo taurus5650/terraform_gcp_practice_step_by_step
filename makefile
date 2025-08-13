@@ -58,7 +58,7 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 	# Artifact Registry
 	cd $(TF_DIR) && terraform import \
 		google_artifact_registry_repository.repo \
-		projects/$(GCP_PROJECT_ID)/locations/$(REGION)/repositories/$(TF_REPO) || true
+		projects/$(GCP_PROJECT_ID)/locations/$(REGION)/repositories/$(REPO) || true
 
 	# VPC Network
 	cd $(TF_DIR) && terraform import \
