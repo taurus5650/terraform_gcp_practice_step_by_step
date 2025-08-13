@@ -4,8 +4,10 @@ DOCKER_FILE := Dockerfile
 
 GCP_PROJECT_ID := terraform-practice-250806
 TF_DIR := $(DEPLOYMENT)/terraform
-TF_REPO := terraform-practice-repo
+REPO := terraform-practice-repo
+SERVICE_NAME := terraform-project-api
 ASIA_PKG := asia-east1-docker.pkg.dev
+REGION := asia-east1
 
 SQL_INSTANCE_NAME := terraformprojectinstancedb
 DB_NAME := terraformprojectdatabase
@@ -52,16 +54,11 @@ run-terraform-fmt:
 run-terraform-plan:
 	cd $(TF_DIR) && terraform plan -out=tfplan
 
-run-docker-push-to-artifact-registry:
-	gcloud auth configure-docker $(ASIA_PKG)
-	docker build --platform=linux/amd64 -f $(DEPLOYMENT)$(DOCKER_FILE) -t $(IMAGE_URI) .
-	docker push $(IMAGE_URI)
-
 run-terraform-import-all: # Telling GCP that Terraform will handle these GCP resources ; Accept error and keep running github action
 	# Artifact Registry
 	cd $(TF_DIR) && terraform import \
 		google_artifact_registry_repository.repo \
-		projects/$(GCP_PROJECT_ID)/locations/asia-east1/repositories/$(TF_REPO) || true
+		projects/$(GCP_PROJECT_ID)/locations/$(REGION)/repositories/$(TF_REPO) || true
 
 	# VPC Network
 	cd $(TF_DIR) && terraform import \
@@ -110,12 +107,12 @@ run-terraform-import-all: # Telling GCP that Terraform will handle these GCP res
 	# Cloud Run Service
 	cd $(TF_DIR) && terraform import \
 		google_cloud_run_service.terraform_project_service \
-		asia-east1/terraform-project-api || true
+		$(REGION)/$(SERVICE_NAME) || true
 
 	# Cloud Run IAM Public Access
 	cd $(TF_DIR) && terraform import \
 		google_cloud_run_service_iam_member.public \
-		"projects/$(GCP_PROJECT_ID)/locations/asia-east1/services/terraform-project-api roles/run.invoker allUsers" || true
+		"projects/$(GCP_PROJECT_ID)/locations/$(REGION)/services/$(SERVICE_NAME) roles/run.invoker allUsers" || true
 
 run-terraform-apply:
 	cd $(TF_DIR) && terraform apply -auto-approve -var="image_url=$(IMAGE_URI)" -var-file=terraform.tfvars\
@@ -142,3 +139,17 @@ check-gcp-log:
 	  --project=$(GCP_PROJECT_ID) \
 	  --limit=1000 \
 	  --format="value(textPayload)"
+
+run-docker-push-to-artifact-registry:
+	gcloud auth configure-docker $(ASIA_PKG)
+	docker build --platform=linux/amd64 -f $(DEPLOYMENT)$(DOCKER_FILE) -t $(IMAGE_URI) .
+	docker push $(IMAGE_URI)
+
+run-deploy-to-cloud-run:
+	gcloud run deploy $(SERVICE_NAME) \
+	  --image $(IMAGE_URI) \
+	  --region $(REGION) \
+	  --platform managed \
+	  --project $(GCP_PROJECT_ID) \
+	  --allow-unauthenticated \
+	  --quiet
